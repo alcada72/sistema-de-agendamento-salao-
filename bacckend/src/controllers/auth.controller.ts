@@ -1,0 +1,159 @@
+import { Role } from "@prisma/client";
+import { compare, hash } from "bcrypt-ts";
+import type { Request, Response } from "express";
+import { SigninSchemas } from "../schemas/signinSchemas";
+import { SignupAdminSchema } from "../schemas/signupSchemas";
+import { SignupUserAmin } from "../services/auth_admin.service";
+import { findUserByTelefone, FindUserEmail } from "../services/user.service";
+import { createJWT } from "../utils/jwt";
+import { getPublicFormattedUrl } from "../utils/url";
+
+export const signupUserAdmin = async (req: Request, res: Response) => {
+  const safedata = SignupAdminSchema.safeParse(req.body)
+
+  if (!safedata.success) {
+    return res.status(401).json({
+      error: safedata.error.flatten().fieldErrors
+    })
+  }
+
+  const verifyUser = await FindUserEmail(safedata.data.email)
+  if (verifyUser) {
+    return res.status(403).json({ error: 'Acesso negado' })
+  }
+
+  const haspass = await hash(safedata.data.password as string, 10)
+
+  const newAdmin = await SignupUserAmin({
+    nome: safedata.data.nome,
+    email: safedata.data.email,
+    password: haspass,
+    telefone: safedata.data.telefone || null,
+    role: Role.ADMIN
+  })
+
+  const token = await createJWT(newAdmin.id, newAdmin.role)
+  return res.status(201).json({
+    message: 'Usuario cadastrdo com sucesso',
+    user: {
+      id: newAdmin.id,
+      name: newAdmin.nome,
+      email: newAdmin.email,
+    },
+    token
+  })
+
+}
+
+export const signupUserProfisional = async (req: Request, res: Response) => {
+  const safedata = SignupAdminSchema.safeParse(req.body)
+  if (!safedata.success) {
+    return res.status(401).json({
+      error: safedata.error.flatten().fieldErrors
+    })
+  }
+  const image = req.file
+  if (!image) {
+    return res.status(400).json({ error: "Nenhum arquivo enviado" });
+  }
+
+  const resumeImage = getPublicFormattedUrl(image.path as string)
+  const verifyUser = await FindUserEmail(safedata.data.email)
+  if (verifyUser) {
+    return res.status(403).json({ error: 'Acesso negado' })
+  }
+
+  const haspass = await hash(safedata.data.password as string, 10)
+  const newAdmin = await SignupUserAmin({
+    nome: safedata.data.nome,
+    email: safedata.data.email,
+    password: haspass,
+    telefone: safedata.data.telefone || null,
+    image: resumeImage,
+    role: Role.PROFESSIONAL
+  })
+  const token = await createJWT(newAdmin.id, newAdmin.role)
+  return res.status(201).json({
+    message: 'Usuario cadastrdo com sucesso',
+    user: {
+      id: newAdmin.id,
+      name: newAdmin.nome,
+      email: newAdmin.email,
+      image: newAdmin.image
+    },
+    token
+  })
+}
+
+export const signupUserClient = async (req: Request, res: Response) => {
+  const safedata = SignupAdminSchema.safeParse(req.body)
+  if (!safedata.success) {
+    return res.status(401).json({
+      error: safedata.error.flatten().fieldErrors
+    })
+  }
+  const verifyUser = await FindUserEmail(safedata.data.email)
+  if (verifyUser) {
+    return res.status(403).json({ error: 'Acesso negado' })
+  }
+  const haspass = await hash(safedata.data.password as string, 10)
+  const newAdmin = await SignupUserAmin({
+    nome: safedata.data.nome,
+    email: safedata.data.email,
+    password: haspass,
+    telefone: safedata.data.telefone || null,
+    role: Role.CLIENT
+  })
+  const token = await createJWT(newAdmin.id, newAdmin.role)
+  return res.status(201).json({
+    message: 'Usuario cadastrdo com sucesso',
+    user: {
+      id: newAdmin.id,
+      name: newAdmin.nome,
+      email: newAdmin.email,
+    },
+    token
+  })
+}
+
+export const SigninUser = async (req: Request, res: Response) => {
+
+  const safedata = await SigninSchemas.safeParse(req.body)
+
+  if (!safedata.success) {
+    return res.status(401).json({
+      error: safedata.error.flatten().fieldErrors
+    })
+  }
+
+  const verifyEmail = await FindUserEmail(safedata.data.credencial)
+  const verifyTelefone = await findUserByTelefone(safedata.data.credencial)
+
+  if (!verifyEmail && !verifyTelefone) {
+    return res.status(400).json({ error: "E-mail ou senha incorreta!" });
+  }
+
+  const userCredencial = verifyTelefone || verifyEmail;
+
+  if (!userCredencial) {
+    return res.status(400).json({ error: "E-mail ou senha incorreta!" });
+  }
+
+  const hasPassword = await compare(safedata.data.password, userCredencial.password)
+
+  if (!hasPassword || hasPassword === undefined || hasPassword === null) {
+    return res.status(400).json({ error: "E-mail ou senha incorreta!" });
+  }
+
+  const token = await createJWT(userCredencial.id, userCredencial.role)
+  return res.status(201).json({
+    message: 'Usuario criado com sucesso',
+    user: {
+      id: userCredencial.id,
+      name: userCredencial.nome,
+      email: userCredencial.email,
+      role: userCredencial.role
+    },
+    token
+  })
+}

@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                     String        @id @default(cuid())
+  nome                   String
+  email                  String        @unique
+  password               String
+  role                   Role          @default(CLIENT)
+  image                  String        @default("/default.png")
+  telefone               String?
+  createdAt              DateTime      @default(now())
+  services               Service[]     @relation("ProfessionalServices")
+  bookingsAsClient       Agendamento[] @relation("ClientBookings")
+  bookingsAsProfessional Agendamento[] @relation("ProfessionalBookings")
+  images                 Images[]
+}
+
+model Service {
+  id             String   @id @default(cuid())
+  nome           String
+  description    String?
+  duration       Int
+  price          Float
+  professionalId String?
+  professional   User?    @relation("ProfessionalServices", fields: [professionalId], references: [id])
+  createdAt      DateTime @default(now())
+
+  bookings Agendamento[]
+  images   Images[]
+}
+
+model Agendamento {
+  id             String            @id @default(cuid())
+  date           DateTime
+  endDate        DateTime
+  status         AgendamentoStatus @default(PENDING)
+  clientId       String
+  serviceId      String
+  professionalId String
+  createdAt      DateTime          @default(now())
+
+  client       User    @relation("ClientBookings", fields: [clientId], references: [id])
+  service      Service @relation(fields: [serviceId], references: [id])
+  professional User    @relation("ProfessionalBookings", fields: [professionalId], references: [id])
+
+  @@map("Booking")
+}
+
+model Images {
+  id        String   @id @default(cuid())
+  userId    String?
+  url       String   @default("/default.png")
+  createdAt DateTime @default(now())
+  serviceId String?
+  service   Service? @relation(fields: [serviceId], references: [id])
+  user      User?    @relation(fields: [userId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  PROFESSIONAL
+  CLIENT
+}
+
+enum AgendamentoStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
