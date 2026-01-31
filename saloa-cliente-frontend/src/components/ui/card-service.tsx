@@ -11,10 +11,11 @@ interface Props {
 }
 
 export const CardService = ({ service }: Props) => {
-const cover = service.images?.[0]?.url ?? null;
+  const cover = service.images?.[0]?.url ?? null;
 
   return (
     <Link
+      target={service.nome}
       href={"/home/services/" + service.id}
       className="border-1 size-full border-gray-900 rounded-lg w-full
       flex-1 min-w-[193px] md:min-w-[180px] max-w-1/2 md:max-w-1/3 overflow-hidden"
@@ -25,7 +26,7 @@ const cover = service.images?.[0]?.url ?? null;
       >
         {service.images.length > 0 && (
           <img
-            src={cover }
+            src={cover}
             alt={service.description}
             title={service.nome}
             loading="lazy"

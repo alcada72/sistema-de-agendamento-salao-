@@ -1,4 +1,3 @@
-import { SigninForm } from "@/components/auth/signinForm";
 import { Logo } from "@/components/ui/logo";
 import SwitchTheme from "@/components/ui/SwitchTheme";
 import Link from "next/link";
@@ -13,7 +12,7 @@ export default function Page() {
       <h1 className="mt-0 md:mt-3 text-2xl ">Entre na sua conta</h1>
       <span className="text-gray-400">Para o acesso total no App.</span>
       <div className=" mt-9 mb-14 flex flex-col gap-4">
-        <SigninForm />
+        
       </div>
       <div className="flex flex-col justify-center items-center gap-1 md:flex-row">
         <div className="text-gray-400">Ainda não tem uma conta?</div>

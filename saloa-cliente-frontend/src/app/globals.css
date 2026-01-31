@@ -49,7 +49,7 @@ body::-webkit-scrollbar {
 }
 
 .borda {
-  border: 2px var(--foreground) solid;
+  border: 1px var(--foreground) solid;
 }
 
 .uppercase {
@@ -74,9 +74,12 @@ body::-webkit-scrollbar-thumb {
 }
 
 .hide-scroobar {
-  scrollbar-width: none;
+  scrollbar-width: 0px;
   -ms-overflow-style: none;
   scroll-behavior: smooth;
+}
+.noScroll{
+   scrollbar-width: 0px;
 }
 
 .hide-scroobar::-webkit-scrollbar-track {
@@ -183,4 +186,10 @@ th {
 
 td {
   color: var(--foreground);
+}
+
+.img-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
 }

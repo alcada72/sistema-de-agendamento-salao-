@@ -31,7 +31,7 @@ export default function Layout({ children }: Props) {
             <NavItem
               label={"Nossos Serviços"}
               icon={faBook}
-              href={"/home/services"}
+              href={"/admin/services"}
             />
             <NavItem label={"Pagina Inicial"} icon={faHouse} href={"/"} />
           </div>
@@ -48,7 +48,6 @@ export default function Layout({ children }: Props) {
         </span>
       </div>
       <div className="flex-1 w-full shrink-0">{children}</div>
-
     </main>
   );
 }

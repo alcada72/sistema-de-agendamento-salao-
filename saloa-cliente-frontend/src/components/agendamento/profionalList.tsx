@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { HardFuncionarioCard } from "../ui/card-funcionario-hard";
 
 interface Props {
-  date: Date;
+  date?: Date;
   onSelect: (id: string) => void;
 }
 

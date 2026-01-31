@@ -7,7 +7,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { KeyboardEvent, useState } from "react";
 
-type Props =  {
+type Props = {
   placeholder: string;
   value?: string;
   filled?: boolean;
@@ -45,7 +45,7 @@ export const Input = ({
       )}
       <input
         type={password && !showPassword ? "password" : "text"}
-        className="flex-1 color outline-none bg-transparent h-full px-4  placeholder-gray-400 "
+        className={`flex-1 ${filled ? "text-white" : "color"}  outline-none bg-transparent h-full px-4  placeholder-gray-400 `}
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange?.(e.target.value)}

@@ -15,10 +15,6 @@ export const SigninForm = () => {
     const result = await SigninService(emailField, passwordField);
     console.log("Result", result, result);
 
-    if (result.role.toLocaleLowerCase() === "ADMIN" || "PROFESSIONAL") {
-      return router.replace("/admin");
-    }
-
     if (result) {
       return router.replace("/");
     }
