@@ -78,8 +78,8 @@ body::-webkit-scrollbar-thumb {
   -ms-overflow-style: none;
   scroll-behavior: smooth;
 }
-.noScroll{
-   scrollbar-width: 0px;
+.noScroll {
+  scrollbar-width: 0px;
 }
 
 .hide-scroobar::-webkit-scrollbar-track {
@@ -88,7 +88,7 @@ body::-webkit-scrollbar-thumb {
 }
 
 .hide-scroobar-webkit-scrollbar-thumb {
-  background-color: var(--foreground);
+  background-color: transparent;
   border-radius: 32px;
 }
 
@@ -115,15 +115,14 @@ body::-webkit-scrollbar-thumb {
 .stat-card h3 {
   color: var(--background);
   font-size: 14px;
-  margin-bottom: 10px;
   text-transform: uppercase;
 }
 
 .stat-number {
   font-size: 36px;
   font-weight: bold;
-  color: var(--background);
-  margin-bottom: 10px;
+  color: #0893e4;
+  margin-bottom: 4px;
 }
 
 .stat-badge {
@@ -145,7 +144,7 @@ body::-webkit-scrollbar-thumb {
 
 .main-content {
   display: grid;
-  grid-template-columns: 2fr 1fr;
+  grid-template-columns: 3fr 1fr;
   gap: 15px;
   padding: 0 10px;
 }
@@ -172,9 +171,14 @@ thead {
 
 th,
 td {
-  padding: 15px;
-  text-align: left;
+  padding: 10px;
+  text-align: start;
   border-bottom: 1px solid #e0e0e0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 10px;
+  max-width: 10px;
 }
 
 th {

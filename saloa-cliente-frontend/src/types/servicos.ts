@@ -1,4 +1,4 @@
-import { images } from "./user"
+import { images, User } from "./user"
 
 export type service = {
   id: string,
@@ -9,7 +9,7 @@ export type service = {
   professionalId: number,
   createdAt: Date,
   images: images[],
-  professional: professional
+  professional: User
 }
 export type agenda = {
   id: string,
@@ -17,14 +17,9 @@ export type agenda = {
   endDate: Date,
   status: "CONFIRMED" | "PENDING" | "CANCELLED",
   createdAt: Date,
-  service:service
+  service: service,
+  client: User
 }
 
-export type professional = {
-  id: string,
-  nome: string,
-  email: string,
-  telefone: string
-}
 
 

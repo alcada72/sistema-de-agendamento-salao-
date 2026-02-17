@@ -1,6 +1,7 @@
 "use client";
-import api from "@/api/api";
 import { Button } from "@/components/ui/button";
+import { Logo } from "@/components/ui/logo";
+import { UpdateImage } from "@/services/auth.service";
 
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -8,76 +9,44 @@ import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 
 export default function Page() {
-  const fileInputCoverRef = useRef<HTMLInputElement>(null);
   const fileInputAvatarRef = useRef<HTMLInputElement>(null);
 
-  const [previewCover, setPreviewCover] = useState<string | null>(null);
-  const [previewAvatar, setPreviewAvatar] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
 
-  const [formDataCover, setFormDataCover] = useState<FormData | null>(null);
-  const [formDataAvatar, setFormDataAvatar] = useState<FormData | null>(null);
+  const [image, setImage] = useState<File | null>(null);
 
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
-  const handleClickCameraCover = () => fileInputCoverRef.current?.click();
+  const router = useRouter();
 
   const handleClickCameraAvatar = () => fileInputAvatarRef.current?.click();
 
-  const handleFileChangeCover = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
+
     if (!file) return;
 
-    setPreviewCover(URL.createObjectURL(file));
+    setImage(file);
 
-    const fd = new FormData();
-    fd.append("cover", file);
-
-    setFormDataCover(fd);
-  };
-
-  const handleFileChangeAvatar = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    setPreviewAvatar(URL.createObjectURL(file));
-
-    const fd = new FormData();
-    fd.append("avatar", file);
-
-    setFormDataAvatar(fd);
+    const views = URL.createObjectURL(file);
+    setPreview(views);
   };
 
   const handleSubmit = async () => {
+    if (!image) return;
+    const fd = new FormData();
+    fd.append("image", image);
+
     try {
       setLoading(true);
 
-      const requests = [];
-
-      if (formDataAvatar) {
-        requests.push(
-          api.put(`/user/avatar`, formDataAvatar, {
-            headers: { "Content-Type": "multipart/form-data" },
-          })
-        );
+      const result = await UpdateImage(fd);
+      if (result) {
+        alert("Atualizado com sucesso!");
+       return router.replace("/");
+      }else{
+        return alert("Erro ao atualizar!");
       }
-
-      if (formDataCover) {
-        requests.push(
-          api.put(`/user/cover`, formDataCover, {
-            headers: { "Content-Type": "multipart/form-data" },
-          })
-        );
-      }
-
-      await Promise.all(requests);
-
-      alert("Atualizado com sucesso!");
-      router.replace("/home");
     } catch (error) {
       console.error(error);
       alert("Erro ao atualizar!");
@@ -87,61 +56,42 @@ export default function Page() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <div className="bg-gray-500 h-80 relative">
-        <img
-          src={previewCover ?? "/default.jpg"}
-          alt="Imagem do fundo"
-          className="size-full object-cover"
-        />
-        <span
-          title="Alterar a imagem de capa"
-          onClick={handleClickCameraCover}
-          className="absolute bottom-0 right-0 mr-2.5 z-50 rounded-full size-10 flex items-center justify-center p-2 cursor-pointer"
-        >
-          <FontAwesomeIcon icon={faCamera} size="2x" />
-        </span>
-      </div>
-
-      <div className="-mt-32 flex relative items-center justify-center w-full">
-        <div className="relative size-60 rounded-full border-2 border-gray-800 overflow-hidden">
+    <div className="max-w-3xl mx-auto h-screen">
+      <div className="flex flex-col gap-3.5 relative items-center justify-center w-full h-full">
+        <div className="flex w-full items-center justify-between mb-3.5 px-7">
+          <Logo size={90} />
+          <p className="text-2xl font-bold">J.M.C</p>
+        </div>
+        <div className="relative size-80 rounded-full border-2 border-gray-800 overflow-hidden">
           <img
-            src={previewAvatar ?? "/default.jpg"}
+            src={preview ?? "/default.jpg"}
             alt="Imagem de perfil"
-            className="size-full object-cover rounded-full"
+            className="size-full object-cover rounded-full bg-gray-700 text-gray-700"
           />
 
           <span
             onClick={handleClickCameraAvatar}
-            className="absolute top-0 left-0 bg-gray-500/40 rounded-full size-full flex items-center justify-center p-2 cursor-pointer hover:bg-gray-500/60"
+            className="absolute top-0 left-0 bg-gray-500/10 rounded-full
+             size-full flex items-center justify-center p-2 cursor-pointer hover:bg-gray-500/30"
           >
             <FontAwesomeIcon icon={faCamera} size="2x" />
           </span>
         </div>
-      </div>
 
-      <div className="max-w-lg mx-auto mt-8 px-6 md:px-0">
-        <Button
-          label={loading ? "Salvando..." : "Salvar alterações"}
-          size={1}
-          onClick={handleSubmit}
-          disabled={!formDataAvatar || !formDataCover || loading}
-        />
+        <div className="max-w-lg w-full mx-auto mt-8 px-6 md:px-0">
+          <Button
+            label={loading ? "Salvando..." : "Salvar alterações"}
+            size={1}
+            onClick={handleSubmit}
+            disabled={!image || loading}
+          />
+        </div>
       </div>
-
-      {/* Inputs escondidos */}
-      <input
-        type="file"
-        ref={fileInputCoverRef}
-        onChange={handleFileChangeCover}
-        accept="image/*"
-        className="hidden"
-      />
 
       <input
         type="file"
         ref={fileInputAvatarRef}
-        onChange={handleFileChangeAvatar}
+        onChange={handleFileChange}
         accept="image/*"
         className="hidden"
       />

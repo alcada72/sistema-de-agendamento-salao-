@@ -3,11 +3,6 @@ import nookies from "nookies";
 //KEYS USER
 export const TOKEN_KEY_USER = "app@auth";
 export const ID_KEY_USER = "app@userId";
-//KEYS ADMIN
-export const TOKEN_KEY_ADMIN = "app@auth@admin";
-export const ID_KEY_ADMIN = "app@AdminId";
-
-//DATA USER
 
 export const saveAuth = (token: string, id: string, ctx: any = null) => {
   nookies.set(ctx, TOKEN_KEY_USER, token, {
@@ -34,33 +29,4 @@ export const getID = (ctx: any = null): string | null => {
 export const clearAuth = (ctx: any = null) => {
   nookies.destroy(ctx, TOKEN_KEY_USER, { path: "/" });
   nookies.destroy(ctx, ID_KEY_USER, { path: "/" });
-};
-
-//DATA ADMIN
-
-export const saveAuthAdmin = (token: string, id: string, ctx: any = null) => {
-  nookies.set(ctx, TOKEN_KEY_ADMIN, token, {
-    path: "/",
-    sameSite: "lax",
-  });
-
-  nookies.set(ctx, ID_KEY_ADMIN, id, {
-    path: "/",
-    sameSite: "lax",
-  });
-};
-
-export const getTokenAdmin = (ctx: any = null): string | null => {
-  const cookies = nookies.get(ctx);
-  return cookies[TOKEN_KEY_ADMIN] || null;
-};
-
-export const getIDAdmin = (ctx: any = null): string | null => {
-  const cookies = nookies.get(ctx);
-  return cookies[ID_KEY_ADMIN] || null;
-};
-
-export const clearAuthAdmin = (ctx: any = null) => {
-  nookies.destroy(ctx, TOKEN_KEY_ADMIN, { path: "/" });
-  nookies.destroy(ctx, ID_KEY_ADMIN, { path: "/" });
 };

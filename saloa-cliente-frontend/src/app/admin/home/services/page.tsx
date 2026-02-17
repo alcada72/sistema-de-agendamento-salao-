@@ -15,9 +15,7 @@ export default function Page() {
   async function getService() {
     try {
       const result = await GetAllServices();
-      const filter = result.filter((e) =>
-        e.nome.includes(search?.toLocaleLowerCase()),
-      );
+
       setservice(result);
     } catch (error) {
       console.log(error);
@@ -27,8 +25,20 @@ export default function Page() {
     getService();
   }, []);
 
+  if (!service || service.length === 0) {
+    return (
+      <>
+        <Header />
+        <div className="p-4 text-center w-full">
+          <p className="text-2xl">Ainda não temos serviços cadastrados</p>
+          <p className="text-lg mt-1.5">crie já um serviço, por favor</p>
+        </div>
+      </>
+    );
+  }
+
   const filter = service.filter((e) =>
-    e.nome.toLocaleLowerCase().includes(search),
+    e.nome.toLocaleLowerCase().includes(search.toLocaleLowerCase()),
   );
 
   return (
@@ -44,7 +54,7 @@ export default function Page() {
           onAdd={() => setshowModal(true)}
         />
 
-        <div className="shrink-0 grid grid-cols-2 md:grid-cols-7 md:gap-3 gap-2 flex-1 p-2 mt-3">
+        <div className="shrink-0 grid grid-cols-2 md:grid-cols-7 md:gap-3 gap-2 flex-1 p-2 mt-3 ">
           {filter.map((s) => (
             <CardService key={s.id} service={s} />
           ))}

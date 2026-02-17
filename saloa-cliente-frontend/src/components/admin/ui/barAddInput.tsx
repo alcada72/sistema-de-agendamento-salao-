@@ -3,8 +3,10 @@ import { Button } from "@/components/ui/button";
 import { IconDefinition } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 type Props = {
+  noButton?: boolean;
   value?: string;
   title?: string;
+  labelBotton?: string;
   placeholder?: string;
   onAdd?: () => void;
   icon?: IconDefinition;
@@ -16,7 +18,9 @@ export default function BarAddInput({
   icon,
   onChange,
   placeholder,
+  labelBotton,
   value,
+  noButton,
 }: Props) {
   return (
     <div className="p-2 flex items-center justify-between w-full">
@@ -35,13 +39,17 @@ export default function BarAddInput({
         />
       </div>
 
-      <span className="text-2xl font-semibold flex-1 text-center">
-        {title}
-      </span>
+      <span className="text-2xl font-semibold flex- text-center">{title}</span>
 
-      <div className="h-10 w-40">
-        <Button label={"+ Criar serviço"} size={3} onClick={onAdd} />
-      </div>
+      {!noButton && (
+        <div className="h-10 w-40">
+          <Button
+            label={labelBotton ? labelBotton : "+ Criar serviço"}
+            size={3}
+            onClick={onAdd}
+          />
+        </div>
+      )}
     </div>
   );
 }

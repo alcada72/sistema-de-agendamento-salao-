@@ -1,21 +1,16 @@
-"use client";
 import { Logo } from "@/components/ui/logo";
 import { ActiveProgressIndicator } from "@/components/ui/spin";
-import { getToken } from "@/utils/auth";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { pingUser } from "@/services/server/user.service";
+import { redirect } from "next/navigation";
 
-export default function Page() {
-  const router = useRouter();
+export default async function Page() {
+  const loged = await pingUser();
 
-  useEffect(() => {
-    const token = getToken();
-    if (token) {
-      router.replace("/home");
-    } else {
-      router.replace("/signin");
-    }
-  }, []);
+  if (!loged) {
+    redirect("/signin");
+  } else {
+    redirect("/home");
+  }
 
   return (
     <div className="min-w-full h-dvh flex flex-col items-center justify-center gap-3">
@@ -26,4 +21,4 @@ export default function Page() {
       </div>
     </div>
   );
-};
+}

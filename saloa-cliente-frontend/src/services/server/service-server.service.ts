@@ -6,7 +6,7 @@ import { getCookie } from "cookies-next"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 
-export const GetAllAgendaentosServer = async (): Promise<agenda[] | undefined> => {
+export const GetAllAgendaentosByUserServer = async (): Promise<agenda[] | undefined> => {
   try {
     const token = await getCookie(TOKEN_KEY_USER, { cookies })
     const id = await getCookie(ID_KEY_USER, { cookies })
@@ -15,6 +15,16 @@ export const GetAllAgendaentosServer = async (): Promise<agenda[] | undefined> =
         Authorization: `Bearer ${token}`,
       },
     })
+    return response.data.agenda
+  } catch (error) {
+    console.log(error)
+  }
+
+}
+
+export const GetAllAgendaentosServer = async (): Promise<agenda[] | undefined> => {
+  try {
+    const response = await api.get(`/appointments`, {})
     return response.data.agenda
   } catch (error) {
     console.log(error)
@@ -33,7 +43,6 @@ export const GetOtherServicesNotIdServer = async (id: string): Promise<service[]
   return response.data.service
 }
 
-
 export const GetServicesLimitedServer = async (page: number = 0, perPage: number = 6): Promise<service[] | undefined> => {
 
   try {
@@ -49,7 +58,6 @@ export const GetServicesLimitedServer = async (page: number = 0, perPage: number
     return response.data.services;
   } catch (error) {
     console.log(error)
-    return redirect('/')
   }
 
 };
@@ -57,16 +65,19 @@ export const GetServicesLimitedServer = async (page: number = 0, perPage: number
 export const GetProfissionaisLimitedServer = async (): Promise<User[] | undefined> => {
 
   try {
-    const response = await api.get(
-      `/professionals`,
-      {
-
-      }
-    );
+    const response = await api.get(`/professionals`, {});
     return response.data.profissionais;
   } catch (error) {
     console.log(error)
-    return redirect('/')
   }
+};
 
+export const GetClientesLimitedServer = async (): Promise<User[] | undefined> => {
+
+  try {
+    const response = await api.get(`/clients`, {});
+    return response.data.clients;
+  } catch (error) {
+    console.log(error)
+  }
 };

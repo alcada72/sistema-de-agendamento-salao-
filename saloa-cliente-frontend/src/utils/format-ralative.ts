@@ -30,3 +30,8 @@ export const formatRelativeTime = (input: string | Date) => {
 
   return "agora";
 };
+
+export function formatHour(date: string | Date) {
+  const d = typeof date === "string" ? new Date(date) : date;
+  return d.toISOString().split("T")[1].replace(":00.000Z", " Horas");
+}

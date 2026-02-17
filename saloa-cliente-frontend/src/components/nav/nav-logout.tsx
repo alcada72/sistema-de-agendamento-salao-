@@ -1,16 +1,18 @@
 "use client";
 
+import { clearAuth } from "@/utils/auth";
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/navigation";
-type Props={
-  hiddenLabel?:boolean
-}
-export const NavLogout = ({hiddenLabel}:Props) => {
+type Props = {
+  hiddenLabel?: boolean;
+};
+export const NavLogout = ({ hiddenLabel }: Props) => {
   const router = useRouter();
 
-  const handleClick = () => {
+  const handleClick = async () => {
     if (!confirm("Deseja Sair?")) return;
+    await clearAuth();
     router.replace("/signin");
   };
 
@@ -23,8 +25,7 @@ export const NavLogout = ({hiddenLabel}:Props) => {
         icon={faArrowRightFromBracket}
         className="size-6 text-red-700"
       />
-      {!hiddenLabel  &&    <div className="font-sans font-semibold">Sair</div> }
-   
+      {!hiddenLabel && <div className="font-sans font-semibold">Sair</div>}
     </div>
   );
 };

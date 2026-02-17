@@ -1,49 +1,112 @@
 "use client";
 
+import apiAdmin from "@/api/api-admin";
 import { Button } from "@/components/ui/button";
 import CardFuncionario from "@/components/ui/card_funcionarios";
 import { Input } from "@/components/ui/input";
+import { GetProfissionaisLimited } from "@/services/admin/servico.service";
+import { User } from "@/types/user";
 import { faImage } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 type Props = {
   mostar: boolean;
   show: () => void;
   roalond: () => void;
 };
 
-export default function ModalCreateServices({ show, mostar,roalond }: Props) {
-  const [preview, setPreview] = useState<string[]>([]);
+export default function ModalCreateServices({ show, mostar, roalond }: Props) {
+  const [preview, setPreview] = useState<string[] | null>(null);
+  const [image, setImage] = useState<File[] | null>(null);
+  const [Proficional, setProficional] = useState<User[] | undefined>([]);
+
+  const [nome, setNome] = useState<string>("");
+  const [professionalId, setProfissionalId] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [duration, setDuration] = useState<string>("");
+  const [price, setPrice] = useState<string>("");
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files;
 
     if (!file) return;
+
     const selectFile = Array.from(file);
+
+    if (selectFile.length > 4) {
+      return alert("Só pode selecionar no maximo 4 imagens");
+    }
+
+    setImage(selectFile);
+
     const views = selectFile.map((img) => URL.createObjectURL(img));
     setPreview(views);
   };
 
-  const handleCreateService = () => {
-    setPreview([]);
-    show();
-    roalond()
+  const handleCreateService = async () => {
+    if (
+      !nome.trim() ||
+      !description.trim() ||
+      !price.trim() ||
+      !professionalId.trim() ||
+      !image
+    )
+      return alert("Prencha todos os campos");
+
+    const formData = new FormData();
+    formData.append("nome", nome);
+    formData.append("description", description);
+    formData.append("price", price);
+    formData.append("professionalId", professionalId);
+    formData.append("duration", duration);
+
+    for (let i = 0; i < image.length; i++) {
+      formData.append("image", image[i]);
+    }
+
+    const result = await apiAdmin.postForm("/services", formData, {});
+    if (result) {
+      HandleCancel();
+      roalond();
+    }
   };
 
   const HandleCancel = () => {
-    setPreview([]);
+    setPreview(null);
+    setDescription("");
+    setNome("");
+    setPrice("");
+    setProfissionalId("");
+    setDuration("");
     show();
   };
+
+  const get = async () => {
+    try {
+      const [profi] = await Promise.all([await GetProfissionaisLimited()]);
+      setProficional(profi);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    get;
+    return () => {
+      get();
+    };
+  }, []);
+
   return (
     <div
       className={`
         ${!mostar ? "hidden" : "flex"}
       fixed inset-0   bg-black/40 
-          backdrop-blur-[2px] items-center justify-center z-50 size-full
+          backdrop-blur-[2px] items-center justify-center z-40 size-full
       `}
     >
       <section className="vbg p-5 size-10/12 rounded-2xl grid grid-cols-2  overflow-hidden">
-        {preview.length > 0 ? (
+        {preview && preview.length > 0 ? (
           <div>
             <header className="mb-2.5 w-10/12 flex justify-between items-center">
               <span className="text-2xl font-medium ">
@@ -57,7 +120,7 @@ export default function ModalCreateServices({ show, mostar,roalond }: Props) {
               </button>
             </header>
             <div
-              className="grid grid-cols-2 gap-2.5 overflow-x-hidden h-full overflow-y-auto 
+              className="grid grid-cols-2 gap-2.5 overflow-x-hidden h-full overflow-y-auto hide-scroobar
             "
             >
               {preview.map((imag, i) => (
@@ -94,7 +157,7 @@ export default function ModalCreateServices({ show, mostar,roalond }: Props) {
                   size="5x"
                 />
                 <span className="text-neutral-300">
-                  selecionar images maximo 5
+                  selecionar images maximo 4
                 </span>
               </div>
             </div>
@@ -112,8 +175,13 @@ export default function ModalCreateServices({ show, mostar,roalond }: Props) {
               <label className="text-lg ml-2 opacity-60">
                 Nome do Serviço *
               </label>
-              <div className="border border-gray-600 rounded-2xl">
-                <Input placeholder="nome do serviço" filled />
+              <div className="border border-gray-600 rounded-2xl text-white">
+                <Input
+                  placeholder="nome do serviço"
+                  filled
+                  value={nome}
+                  onChange={(texto) => setNome(texto)}
+                />
               </div>
             </span>
 
@@ -123,9 +191,12 @@ export default function ModalCreateServices({ show, mostar,roalond }: Props) {
               </label>
               <div className="border border-gray-600 rounded-2xl bg-gray-700">
                 <textarea
+                  value={description}
+                  onChange={(texto) => setDescription(texto.target.value)}
                   rows={5}
-                  className="flex-1 hide-scroobar w-full outline-none bg-transparent h-full px-4 text-justify  placeholder-gray-400 "
-                  role="none"
+                  cols={5}
+                  className="flex-1 hide-scroobar w-full outline-none bg-transparent
+                  h-full px-4 text-justify  placeholder-gray-400 text-white"
                   name="descricao"
                   id="descricao"
                   placeholder="Descreva o produto com detalhes minunciosos"
@@ -139,7 +210,12 @@ export default function ModalCreateServices({ show, mostar,roalond }: Props) {
                   Preço do Serviço *
                 </label>
                 <div className="border border-gray-600 rounded-2xl">
-                  <Input placeholder="Preço ex.: 1500" filled />
+                  <Input
+                    placeholder="Preço ex.: 1500"
+                    filled
+                    value={price}
+                    onChange={(texto) => setPrice(texto)}
+                  />
                 </div>
               </span>
               <span className="flex flex-col w-full">
@@ -152,6 +228,8 @@ export default function ModalCreateServices({ show, mostar,roalond }: Props) {
                    `}
                 >
                   <select
+                    value={duration}
+                    onChange={(texto) => setDuration(texto.target.value)}
                     name="duracao"
                     id="duracao"
                     className="flex-1 bg-gray-700 outline-none  h-full px-4 text-gray-200  placeholder-gray-200  b"
@@ -176,10 +254,23 @@ export default function ModalCreateServices({ show, mostar,roalond }: Props) {
               className="flex w-full max-w-9/12 items-center
                   gap-3 overflow-y-hidden overflow-x-scroll px-4 hide-scroobar noScroll"
             >
-              {[1, 2, 3].map((_, i) => (
-                <CardFuncionario key={i} />
-              ))}
+              {Proficional &&
+                Proficional.length > 0 &&
+                Proficional.map((p) => (
+                  <div
+                    key={p.id}
+                    onClick={() => setProfissionalId(p.id)}
+                    className={`p-1 my-1 ${
+                      professionalId === p.id &&
+                      "border-1 border-blue-500 scale-100"
+                    } rounded-lg w-full bg-blue-500/10 transition-all
+      flex-1 min-w-[193px] md:min-w-[180px] max-w-1/2 overflow-hidden`}
+                  >
+                    <CardFuncionario user={p} />
+                  </div>
+                ))}
             </div>
+
             <div className="w-9/12 mt-2.5">
               <Button
                 vbg

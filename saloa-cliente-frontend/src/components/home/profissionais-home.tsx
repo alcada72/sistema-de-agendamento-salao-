@@ -4,9 +4,14 @@ import { HardFuncionarioCard } from "../ui/card-funcionario-hard";
 
 export default async function ProfissionalHome() {
   const service = await GetProfissionaisLimitedServer();
-  if (!service) {
-    return null;
+  if (!service || service.length === 0) {
+        return (
+      <div className="p-4 text-center w-full">
+        <p>Sem próximos agendamentos</p>
+      </div>
+    );
   }
+
   return (
     <div className="w-full">
       <section className="p-4 flex items-center justify-between">
@@ -21,10 +26,7 @@ export default async function ProfissionalHome() {
        gap-3 overflow-y-hidden overflow-x-auto px-4 hide-scroobar"
       >
         {service.map((p) => (
-          <HardFuncionarioCard
-            key={p.id}
-            funcion={p}
-          />
+          <HardFuncionarioCard key={p.id} user={p} />
         ))}
       </div>
     </div>

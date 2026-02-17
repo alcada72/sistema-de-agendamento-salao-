@@ -31,7 +31,6 @@ export const GetServicesLimited = async (page: number = 0, perPage: number = 6):
   return response.data.services;
 };
 
-
 export const PostAgendamento = async (data: { serviceId: string, professionalId: string, date: string }) => {
   try {
     const res = await api.post<agendado>("/appointments", data)
@@ -59,7 +58,7 @@ export const GetProfissionaisLimited = async (): Promise<User[] | undefined> => 
 
 };
 
-export const GetAllAgendaentos = async (): Promise<agenda[] | undefined> => {
+export const GetAllAgendaentosByUser = async (): Promise<agenda[] | undefined> => {
   try {
     const id = await getID()
     const response = await api.get(`/clients/appointments/${id}`, {})
@@ -68,7 +67,6 @@ export const GetAllAgendaentos = async (): Promise<agenda[] | undefined> => {
     console.log(error)
     return redirect('/')
   }
-
 }
 
 export const DeleteAgendamentoById = async (id: string): Promise<boolean | undefined> => {

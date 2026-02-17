@@ -43,14 +43,15 @@ export function ProfissionaList({ onSelect }: Props) {
             key={p.id}
             className={`p-0 m-0 ${
               select === p.id && "border-2 border-blue-500"
-            } rounded-lg w-full
+            } rounded-lg w-full relative
       flex-1 min-w-[193px] md:min-w-[180px] max-w-1/2 md:max-w-1/3 overflow-hidden`}
             onClick={() => {
               setSelect(p.id);
               onSelect(p.id);
             }}
           >
-            <HardFuncionarioCard funcion={p} />
+            <HardFuncionarioCard user={p} />
+            <div className="absolute inset-0 size-full bg-transparent cursor-pointer"></div>
           </div>
         ))}
       </div>

@@ -11,6 +11,7 @@ type Props = {
   placeholder: string;
   value?: string;
   filled?: boolean;
+  autoComplete?: boolean;
   icon?: IconDefinition;
   password?: boolean;
   onChange?: (newValue: string) => void;
@@ -22,6 +23,7 @@ export const Input = ({
   password = false,
   value = "",
   filled = false,
+  autoComplete,
   icon,
   onChange,
   onEnter,
@@ -48,6 +50,9 @@ export const Input = ({
         className={`flex-1 ${filled ? "text-white" : "color"}  outline-none bg-transparent h-full px-4  placeholder-gray-400 `}
         placeholder={placeholder}
         value={value}
+        autoComplete="off"
+        autoSave="off"
+        autoCorrect="off"
         onChange={(e) => onChange?.(e.target.value)}
         onKeyUp={handleKeyUp}
       />

@@ -1,37 +1,12 @@
-"use client";
-import { getUserMeService } from "@/services/user.service";
-import { User } from "@/types/user";
-import { getToken } from "@/utils/auth";
+import { getUserMeServiceServer } from "@/services/server/user.service";
 import { Today } from "@/utils/today";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { useEffect, useState } from "react";
 
-export default function Subheader() {
-  const [user, setUser] = useState<User>();
+export default async function Subheader() {
+    const user = await getUserMeServiceServer();
+  
   const date = Today();
-  useEffect(() => {
-    const token = getToken();
 
-    async function loadUser() {
-      try {
-        const response = await getUserMeService();
-        if (!response) {
-          redirect("/");
-        }
-        setUser(response);
-      } catch (error) {
-        console.log("Erro ao buscar usuário:", error);
-        redirect("/");
-      }
-    }
-
-    if (!token) {
-      redirect("/");
-    }
-
-    loadUser();
-  }, []);
 
   if (!user) {
     return <SubheaderSkeleton />;

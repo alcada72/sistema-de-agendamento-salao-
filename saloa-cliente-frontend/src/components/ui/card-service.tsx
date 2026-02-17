@@ -5,24 +5,32 @@ import { FormatPrice } from "@/utils/formatePrice";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 interface Props {
   service: service;
 }
 
 export const CardService = ({ service }: Props) => {
+  const router = usePathname();
+  const isAdmin = router.startsWith("/admin");
+
   const cover = service.images?.[0]?.url ?? null;
 
   return (
     <Link
-      target={service.nome}
-      href={"/home/services/" + service.id}
-      className="border-1 size-full border-gray-900 rounded-lg w-full
-      flex-1 min-w-[193px] md:min-w-[180px] max-w-1/2 md:max-w-1/3 overflow-hidden"
+      title={service.nome}
+      href={
+        !isAdmin
+          ? "/home/services/" + service.id
+          : "/admin/services/" + service.id
+      }
+      className="border-1 size-full border-gray-900/70 rounded-lg w-full
+      flex-1 min-w-[193px] md:min-w-[180px]  max-w-1/3 md:max-w-1/4 overflow-hidden shadow shadow-black/30"
     >
       <div
         className="flex-1 overflow-hidden rounded-lg
-        min-h-[180px] max-h-[180px] size-full aspect-video"
+        min-h-[180px] max-h-[180px] size-full aspect-video p-1"
       >
         {service.images.length > 0 && (
           <img
@@ -32,7 +40,7 @@ export const CardService = ({ service }: Props) => {
             loading="lazy"
             draggable="false"
             crossOrigin="anonymous"
-            className="object-cover size-full bg-neutral-400/30"
+            className="object-cover size-full bg-neutral-400/30 rounded shadow"
           />
         )}
       </div>

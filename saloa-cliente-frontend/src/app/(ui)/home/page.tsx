@@ -6,12 +6,12 @@ import { Header } from "@/components/ui/header";
 
 export default async function Home() {
   return (
-    <div className="w-full">
+    <div className="w-full mb-7">
       <Header hiddenBorder />
       <Subheader />
       <Proximoagendamento />
       <ServicosHome />
-      <ProfissionalHome />
+      <ProfissionalHome /> 
     </div>
   );
 }

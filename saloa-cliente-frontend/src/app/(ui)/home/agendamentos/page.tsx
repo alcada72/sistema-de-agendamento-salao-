@@ -5,7 +5,7 @@ import SwitchTheme from "@/components/ui/SwitchTheme";
 import {
   CancelAgendamentoById,
   DeleteAgendamentoById,
-  GetAllAgendaentos,
+  GetAllAgendaentosByUser,
 } from "@/services/servico.service";
 import { agenda } from "@/types/servicos";
 import { formatRelativeTime } from "@/utils/format-ralative";
@@ -16,7 +16,7 @@ export default function Page() {
 
   const handleGetallAgendas = async () => {
     try {
-      const res = await GetAllAgendaentos();
+      const res = await GetAllAgendaentosByUser();
       if (!res) {
         return;
       }
@@ -47,6 +47,7 @@ export default function Page() {
       }
     }
   };
+
   const handleDeleteAgendamento = async (id: string) => {
     if (confirm("Deseja mesmo eliminar este item da agenda")) {
       const deleted = await DeleteAgendamentoById(id);

@@ -15,8 +15,11 @@ export const SigninForm = () => {
     const result = await SigninService(emailField, passwordField);
     console.log("Result", result, result);
 
-    if (result) {
-      return router.replace("/");
+    if (!result) {
+      alert("E-mailou senha incorreta");
+    }
+    {
+      return router.replace("/home");
     }
   };
 

@@ -4,9 +4,11 @@ import { CardService } from "../ui/card-service";
 
 export default async function ServicosHome() {
   const service = await GetServicesLimitedServer();
-  if (!service) {
+
+  if (!service || service.length === 0) {
     return null;
   }
+
   return (
     <div className="w-full">
       <section className="p-4 flex items-center justify-between">

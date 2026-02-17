@@ -44,7 +44,7 @@ export const MenuHome = ({ activeMenu }: Props) => {
           href={"/home/services"}
         />
         <NavItem label={"Configurações"} icon={faTools} href={"/config"} />
-        <NavItem label={"Guardados"} icon={faBookmark} href={"/home/saves"} />
+        <NavItem label={"Agenda"} icon={faBookmark} href={"/home/agendamentos"} />
       </nav>
 
       <div className="p-5 flex flex-row items-center justify-between">

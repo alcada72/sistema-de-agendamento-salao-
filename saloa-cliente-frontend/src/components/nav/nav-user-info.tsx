@@ -1,36 +1,9 @@
-"use client";
-import { getUserMeService } from "@/services/user.service";
-import { User } from "@/types/user";
-import { getToken } from "@/utils/auth";
+import { getUserMeServiceServer } from "@/services/server/user.service";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { useEffect, useState } from "react";
 import { SubheaderSkeleton } from "../home/sub-header";
 
-export const NavUserInfo = () => {
-  const [user, setUser] = useState<User>();
-
-  useEffect(() => {
-    const token = getToken();
-
-    async function loadUser() {
-      try {
-        const response = await getUserMeService();
-        if (!response) {
-          redirect("/");
-        }
-        setUser(response);
-      } catch (error) {
-        console.log("Erro ao buscar usuário:", error);
-      }
-    }
-
-    if (token) {
-      loadUser();
-    } else {
-      redirect("/");
-    }
-  }, []);
+export const NavUserInfo = async () => {
+  const user = await getUserMeServiceServer();
 
   if (!user) {
     return <SubheaderSkeleton />;
@@ -38,7 +11,7 @@ export const NavUserInfo = () => {
 
   return (
     <div className="flex items-center">
-      <div className="size-10 mr-2 rounded-full overflow-hidden">
+      <div className="size-10 mr-2 rounded-full overflow-hidden bg-gray-400">
         <Link href="/profile">
           <img
             src={user.image}

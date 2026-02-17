@@ -10,18 +10,20 @@ interface AuthResponse {
 export const SigninService = async (
   credencial: string,
   password: string
-): Promise<User> => {
+): Promise<User | false> => {
+  try {
+    const { data } = await api.post<AuthResponse>("/auth/signin", {
+      credencial,
+      password
+    });
 
-  const { data } = await api.post<AuthResponse>("/auth/signin", {
-    credencial,
-    password
-  });
+    saveAuth(data.token, data.user.id);
 
+    return data.user;
+  } catch (error) {
+    return false
+  }
 
-  saveAuth(data.token, data.user.id);
-
-
-  return data.user;
 };
 
 export const SignUpService = async (
@@ -41,4 +43,23 @@ export const SignUpService = async (
   saveAuth(data.token, data.user.id);
 
   return data.user;
+};
+
+export const UpdateImage = async (
+  formData: FormData
+): Promise<true | false> => {
+
+  try {
+    const response = await api.putForm(`/users/avatar`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+    
+    if (response.status !== 201) {
+      return false
+    }
+
+    return true;
+  } catch (error) {
+    return false
+  }
 };
