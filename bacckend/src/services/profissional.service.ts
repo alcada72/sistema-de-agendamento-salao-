@@ -42,7 +42,5 @@ export const FindAllProfissionais = async () => {
   for (const user in aliatorio) {
     aliatorio[user].image = getPublicURL(aliatorio[user].image || undefined);
   }
-
-  
   return aliatorio
 }

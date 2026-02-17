@@ -16,7 +16,7 @@ export const verifyJWT = async (
 ) => {
   const authHeader = req.headers["authorization"];
   if (!authHeader) {
-    return res.status(401).json({ error: "Token não fornecido" });
+    return res.status(403).json({ error: "Token não fornecido" });
   }
 
   const token = authHeader.split(" ")[1];
@@ -29,13 +29,13 @@ export const verifyJWT = async (
 
     const user = await FindUserById(decoded.id);
     if (!user) {
-      return res.status(401).json({ error: "Usuário não encontrado" });
+      return res.status(403).json({ error: "Acesso Negado" });
     }
     req.userId = user.id;
     req.role = decoded.role;
     next();
   } catch (error) {
-    return res.status(401).json({ error: "Token inválido ou expirado" });
+    return res.status(403).json({ error: "Token inválido ou expirado" });
   }
 };
 

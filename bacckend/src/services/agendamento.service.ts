@@ -281,11 +281,7 @@ export const FindAllAgendamentos = async () => {
         }
       },
     },
-    where: {
-      endDate: {
-        gt: new Date()
-      }
-    }
+    orderBy: { date: 'desc', }
   })
   return agendamentos
 }

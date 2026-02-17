@@ -31,6 +31,8 @@ app.use(
   })
 );
 
+
+
 //Configuração de rotas
 app.use(mainRouter);
 

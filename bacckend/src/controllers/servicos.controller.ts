@@ -1,6 +1,8 @@
 import { Response } from "express";
+import { commentSchema } from "../schemas/comment";
 import { paginationSchemas } from "../schemas/parpage";
 import { servicosSchema } from "../schemas/servicosSchemas";
+import { createComments } from "../services/comments.service";
 import { FindProfissionalById } from "../services/profissional.service";
 import { creatServicesService, deleteServiceByIdservice, findAllServices, findServiceById, getOtherServiceNotId, getServicesWithPagination, updateServiceByIdservice } from "../services/servicos.service";
 import { extendedRequest } from "../types/extended-types";
@@ -52,6 +54,37 @@ export async function creatServicos(req: extendedRequest, res: Response) {
   return res.status(201).json({
     message: "Serviço criado com sucesso",
     servico: newServico
+  });
+}
+
+export async function commentServico(req: extendedRequest, res: Response) {
+  const userId = req.userId as string
+  const { id } = req.params;
+
+  const safedata = commentSchema.safeParse(req.body)
+  if (!safedata.success) {
+    return res.status(400).json({
+      error: safedata.error.flatten().fieldErrors
+    })
+  }
+
+
+
+  const service = await findServiceById(id);
+  if (!service) {
+    return res.status(404).json({ error: "Serviço não encontrado" });
+
+  }
+
+  const comment = await createComments(id, userId, safedata.data.commentText)
+
+  if (!comment) {
+    return res.status(403).json({ error: "Erro ao criar serviço" });
+  }
+
+  return res.status(201).json({
+    message: "comentario criado com sucesso",
+    comment
   });
 }
 

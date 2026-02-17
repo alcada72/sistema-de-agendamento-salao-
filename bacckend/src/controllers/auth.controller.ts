@@ -4,6 +4,7 @@ import type { Request, Response } from "express";
 import { SigninSchemas } from "../schemas/signinSchemas";
 import { SignupAdminSchema } from "../schemas/signupSchemas";
 import { SignupUserAmin } from "../services/auth_admin.service";
+import { RegisterActividade } from "../services/notification.service";
 import { findUserByTelefone, FindUserEmail } from "../services/user.service";
 import { createJWT } from "../utils/jwt";
 import { getPublicFormattedUrl } from "../utils/url";
@@ -31,7 +32,9 @@ export const signupUserAdmin = async (req: Request, res: Response) => {
     telefone: safedata.data.telefone || null,
     role: Role.ADMIN
   })
-
+  if (!newAdmin) {
+    return res.status(403).json({ error: 'Acesso negado' })
+  }
   const token = await createJWT(newAdmin.id, newAdmin.role)
   return res.status(201).json({
     message: 'Usuario cadastrdo com sucesso',
@@ -64,6 +67,7 @@ export const signupUserProfisional = async (req: Request, res: Response) => {
   }
 
   const haspass = await hash(safedata.data.password as string, 10)
+
   const newAdmin = await SignupUserAmin({
     nome: safedata.data.nome,
     email: safedata.data.email,
@@ -72,7 +76,12 @@ export const signupUserProfisional = async (req: Request, res: Response) => {
     image: resumeImage,
     role: Role.PROFESSIONAL
   })
+
+  if (!newAdmin) {
+    return res.status(403).json({ error: 'Acesso negado' })
+  }
   const token = await createJWT(newAdmin.id, newAdmin.role)
+
   return res.status(201).json({
     message: 'Usuario cadastrdo com sucesso',
     user: {
@@ -93,24 +102,32 @@ export const signupUserClient = async (req: Request, res: Response) => {
     })
   }
   const verifyUser = await FindUserEmail(safedata.data.email)
+  
   if (verifyUser) {
     return res.status(403).json({ error: 'Acesso negado' })
   }
+
   const haspass = await hash(safedata.data.password as string, 10)
-  const newAdmin = await SignupUserAmin({
+  const newClient = await SignupUserAmin({
     nome: safedata.data.nome,
     email: safedata.data.email,
     password: haspass,
     telefone: safedata.data.telefone || null,
     role: Role.CLIENT
   })
-  const token = await createJWT(newAdmin.id, newAdmin.role)
+  if (!newClient) {
+    return res.status(403).json({ error: 'Acesso negado' })
+  }
+  const token = await createJWT(newClient.id, newClient.role)
+
+  await RegisterActividade(`Cliente ${newClient.nome} acbou de se registar`, newClient.id)
+  
   return res.status(201).json({
     message: 'Usuario cadastrdo com sucesso',
     user: {
-      id: newAdmin.id,
-      name: newAdmin.nome,
-      email: newAdmin.email,
+      id: newClient.id,
+      name: newClient.nome,
+      email: newClient.email,
     },
     token
   })
@@ -142,7 +159,7 @@ export const SigninUser = async (req: Request, res: Response) => {
   const hasPassword = await compare(safedata.data.password, userCredencial.password)
 
   if (!hasPassword || hasPassword === undefined || hasPassword === null) {
-    return res.status(400).json({ error: "E-mail ou senha incorreta!" });
+    return res.status(403).json({ error: "E-mail ou senha incorreta!" });
   }
 
   const token = await createJWT(userCredencial.id, userCredencial.role)

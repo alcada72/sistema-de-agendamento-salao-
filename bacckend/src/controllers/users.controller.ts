@@ -1,5 +1,6 @@
 import { Response } from "express";
 import { upDateUserSchema } from "../schemas/update-user";
+import { getUserNotifications } from "../services/notification.service";
 import { DeleteUserById, FindAllUsers, FindUserById, updateAvatarUser, UpdateUserById, UserCreateImagem } from "../services/user.service";
 import { extendedRequest } from "../types/extended-types";
 import { getPublicFormattedUrl } from "../utils/url";
@@ -129,19 +130,34 @@ export async function upDateAvater(req: extendedRequest, res: Response) {
   const id = req.userId as string;
 
   if (!req.file) {
-    return res.status(400).json({ error: "Nenhum arquivo enviado" });
+    return res.status(403).json({ error: "Nenhum arquivo enviado" });
   }
 
   const user = await FindUserById(id);
 
   if (!user) {
-    return res.status(404).json({ error: "Usuário inexistente" });
+    return res.status(403).json({ error: "Usuário inexistente" });
   }
 
   const publicUrl = getPublicFormattedUrl(req.file.path);
 
+  const avatar = await updateAvatarUser(id, { image: publicUrl })
 
-  await updateAvatarUser(id, { image: publicUrl })
+  if (!avatar) {
+    return res.status(403).json({ error: "Erro ao atualizar avatar" });
+  }
 
   res.status(201).json({ message: "Imagem de perfil atualizada com sucesso com sucesso", })
+}
+
+export async function getNotifcationsByUser(req: extendedRequest, res: Response) {
+  const id = req.userId;
+  if (!id) {
+    return res.status(401).json({ error: "Não autenticado" });
+  }
+
+
+  const noticatios = await getUserNotifications(id as string)
+
+  res.json({ noticatios })
 }

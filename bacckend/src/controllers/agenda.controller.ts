@@ -2,6 +2,8 @@ import { AgendamentoStatus } from "@prisma/client";
 import { Request, Response } from "express";
 import { agendaSchemas } from "../schemas/agendaSchemas";
 import { CreateAgendamento, DeleteAgendamentoById, FindAgendamentoById, FindAllAgendamentos, UpdateAgendamentoById, updateSatusAgendamentoById } from "../services/agendamento.service";
+import { RegisterActividade, sendNotifications } from "../services/notification.service";
+import { FindUserById } from "../services/user.service";
 import { extendedRequest } from "../types/extended-types";
 
 export async function createAppointment(req: extendedRequest, res: Response) {
@@ -15,11 +17,21 @@ export async function createAppointment(req: extendedRequest, res: Response) {
   if (!userId) {
     return res.status(401).json({ error: "Não autenticado" });
   }
+
+  const user = await FindUserById(userId)
+
+  if (!user) {
+    return res.status(401).json({ error: "Não autenticado" });
+  }
+
   const agenda = await CreateAgendamento({
     ...safedata.data,
     clientId: userId as string,
     date: new Date(safedata.data.date)
   });
+
+  await RegisterActividade(`Cliente ${user?.nome} agendou o serviço ${agenda.service.nome} `, user.id, agenda.service.id)
+  await sendNotifications(`Cliente ${user?.nome} agendou o serviço ${agenda.service.nome} `, agenda.professional.id, agenda.service.id, user.id)
   // Implementation here
   return res.status(201).json({ message: "Agendamento criado com sucesso", agenda });
 }
@@ -118,11 +130,28 @@ export async function comfirmAppointmentById(req: extendedRequest, res: Response
     return res.status(404).json({ error: "Agenda não existente" });
   }
 
+  const user = await FindUserById(agendado.client.id)
+
+  if (!user) {
+    return res.status(401).json({ error: "Não autenticado" });
+  }
+
   const agendaAtualizada = await updateSatusAgendamentoById(agendado.id, status as AgendamentoStatus);
   if (!agendaAtualizada) {
     return res.status(400).json({
       message: "Erro ao atualizar",
     });
+  }
+
+  console.log(agendaAtualizada)
+  await RegisterActividade(`uma agenda foi atualizada para ${agendaAtualizada.status} `, agendaAtualizada.clientId, agendaAtualizada.serviceId)
+
+  if (agendaAtualizada.status == 'CONFIRMED' || agendaAtualizada.status == 'COMPLETED') {
+    await sendNotifications(`Cliente ${user?.nome} a sua agenda foi ${agendaAtualizada.status} `,
+      agendaAtualizada.clientId,
+      agendaAtualizada.serviceId,
+      agendaAtualizada.professionalId
+    )
   }
 
   return res.status(200).json({

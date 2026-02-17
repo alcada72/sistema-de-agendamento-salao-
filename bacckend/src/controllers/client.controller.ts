@@ -3,8 +3,8 @@ import { GetAgendamentoByUser } from "../services/agendamento.service";
 import { findAllClient, findClientById } from "../services/clientes.service";
 
 export async function getAllClients(req: Request, res: Response) {
-  const user = await findAllClient()
-  return res.status(200).json({ user })
+  const clients = await findAllClient()
+  return res.status(200).json({ clients })
 }
 export async function getClientById(req: Request, res: Response) {
   const { id } = req.params
@@ -26,7 +26,9 @@ export async function getAppointmentsByUserId(req: Request, res: Response) {
   if (!id) {
     return res.status(401).json({ message: 'informe um id por favor' })
   }
+  
   const user = await findClientById(id as string)
+
   if (!user) {
     return res.status(401).json({ message: 'usuario não econtrado' })
   }

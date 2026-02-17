@@ -90,19 +90,51 @@ export const findServiceById = async (id: string) => {
           id: true,
           nome: true,
           email: true,
-          telefone: true
+          telefone: true,
+          image: true,
+          images: true,
+        }
+      },
+      comments: {
+        select: {
+          id: true,
+          serviceId: true,
+          commentText: true,
+          createdAt: true,
+          user: {
+            select: {
+              id: true,
+              nome: true,
+              image: true
+            }
+          }
         }
       }
     },
     where: { id }
   })
 
-
   if (service) {
     for (const imageIndex in service.images) {
       service.images[imageIndex].url = getPublicURL(service.images[imageIndex].url)
     }
+
+    if (service?.professional) {
+      service.professional.image = getPublicURL(service.professional?.image)
+      for (const imageIndex in service.professional.images) {
+        service.professional.images[imageIndex].url = getPublicURL(service.professional.images[imageIndex].url)
+      }
+    }
+    if (service.comments) {
+      for (const imageIndex in service.comments) {
+        if (service.comments[imageIndex].user) {
+          service.comments[imageIndex].user.image = getPublicURL(service.comments[imageIndex].user.image)
+        }
+      }
+    }
   }
+
+
 
   return service
 }
