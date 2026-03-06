@@ -6,7 +6,6 @@ import { getPublicURL } from "../utils/url"
 export const sendNotifications = async (message: string, recevidId: string, serviceId?: string, senderId?: string) => {
   const notify = await prisma.notification.create({
     data: { message, senderId, recevidId, serviceId },
-
   })
 
   return notify
@@ -22,6 +21,7 @@ export const getUserNotifications = async (recevidId: string) => {
           id: true,
           nome: true,
           image: true,
+          role: true,
         },
       },
     },
@@ -42,8 +42,17 @@ export const RegisterActividade = async (message: string, senderId: string, serv
   })
 
   for (const admin of admins) {
-    await sendNotifications(message, admin.id, senderId, serviceId)
+    await sendNotifications(message, admin.id, serviceId, senderId)
   }
 
   return admins
+}
+
+export const markAsRead = async (id: string) => {
+  return prisma.notification.update({
+    where: { id },
+    data: {
+      isRead: true,
+    }
+  })
 }

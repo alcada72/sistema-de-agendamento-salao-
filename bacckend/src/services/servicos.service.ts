@@ -184,21 +184,45 @@ export const findAllServices = async () => {
           id: true,
           nome: true,
           email: true,
-          telefone: true
+          telefone: true,
+          image: true
+        }
+      },
+      comments: {
+        select: {
+          id: true,
+          commentText: true,
+          createdAt: true,
+          user: {
+            select: {
+              id: true,
+              nome: true,
+              image: true
+            }
+          }
         }
       }
     },
     orderBy: { createdAt: 'desc' }
   })
 
-  for (const serviceIndex in services) {
-    const element = services[serviceIndex].images;
+  for (const element of services) {
+    if (element.comments) {
+      for (const comment of element.comments) {
+        if (comment.user && comment.user.image) {
+          comment.user.image = getPublicURL(comment.user.image)
+        }
+      }
+    }
 
-    for (const imageIndex in element) {
-      element[imageIndex].url = getPublicURL(element[imageIndex].url)
+    if (element.professional && element.professional.image) {
+      element.professional.image = getPublicURL(element.professional.image)
+    }
+
+    for (const image of element.images) {
+      image.url = getPublicURL(image.url)
     }
   }
-
   return services
 }
 
@@ -300,7 +324,22 @@ export const getOtherServiceNotId = async (id: string,
           id: true,
           nome: true,
           email: true,
-          telefone: true
+          telefone: true,
+          image: true
+        }
+      },
+      comments: {
+        select: {
+          id: true,
+          commentText: true,
+          createdAt: true,
+          user: {
+            select: {
+              id: true,
+              nome: true,
+              image: true
+            }
+          }
         }
       }
     },
@@ -310,12 +349,24 @@ export const getOtherServiceNotId = async (id: string,
     take: perPage,
 
   })
+
   const aliatorio = services.sort(() => 0.5 - Math.random());
 
-  for (const serviceIndex in aliatorio) {
-    const element = aliatorio[serviceIndex].images;
-    for (const imageIndex in element) {
-      element[imageIndex].url = getPublicURL(element[imageIndex].url)
+  for (const element of aliatorio) {
+    if (element.comments) {
+      for (const comment of element.comments) {
+        if (comment.user && comment.user.image) {
+          comment.user.image = getPublicURL(comment.user.image)
+        }
+      }
+    }
+
+    if (element.professional && element.professional.image) {
+      element.professional.image = getPublicURL(element.professional.image)
+    }
+
+    for (const image of element.images) {
+      image.url = getPublicURL(image.url)
     }
   }
 
@@ -347,7 +398,22 @@ export const getServicesWithPagination = async (
           id: true,
           nome: true,
           email: true,
-          telefone: true
+          telefone: true,
+          image: true
+        }
+      },
+      comments: {
+        select: {
+          id: true,
+          commentText: true,
+          createdAt: true,
+          user: {
+            select: {
+              id: true,
+              nome: true,
+              image: true
+            }
+          }
         }
       }
     },
@@ -358,10 +424,21 @@ export const getServicesWithPagination = async (
   })
   const aliatorio = services.sort(() => 0.5 - Math.random());
 
-  for (const serviceIndex in aliatorio) {
-    const element = aliatorio[serviceIndex].images;
-    for (const imageIndex in element) {
-      element[imageIndex].url = getPublicURL(element[imageIndex].url)
+  for (const element of aliatorio) {
+    if (element.comments) {
+      for (const comment of element.comments) {
+        if (comment.user && comment.user.image) {
+          comment.user.image = getPublicURL(comment.user.image)
+        }
+      }
+    }
+
+    if (element.professional && element.professional.image) {
+      element.professional.image = getPublicURL(element.professional.image)
+    }
+
+    for (const image of element.images) {
+      image.url = getPublicURL(image.url)
     }
   }
 

@@ -2,6 +2,7 @@ import { Router } from "express"
 import * as agendaController from "../controllers/agenda.controller"
 import * as authController from "../controllers/auth.controller"
 import * as clientController from "../controllers/client.controller"
+import * as emailController from "../controllers/email.controller"
 import * as pingController from "../controllers/ping.controller"
 import * as professionalController from "../controllers/profissional.controller"
 import * as servicesController from "../controllers/servicos.controller"
@@ -13,6 +14,13 @@ export const mainRouter = Router()
 
 mainRouter.get("/ping", pingController.ping)
 mainRouter.get("/pingPrivate", verifyJWT, pingController.pingPrivate)
+
+mainRouter.post("/verify/email", emailController.verifacationEmail);
+mainRouter.post(
+  "/verify/email/reenviar",
+  verifyJWT,
+  emailController.reeSendEmail
+);
 
 //rotas de autenticação
 mainRouter.post('/auth/signup/admin', authController.signupUserAdmin)
@@ -26,11 +34,13 @@ mainRouter.put('/users/me', verifyJWT, usersController.updateMe)
 mainRouter.delete('/users/me', verifyJWT, usersController.deleteMe)
 mainRouter.post('/users/image', verifyJWT, upload.single("image"), usersController.postImagem)
 mainRouter.put('/users/avatar', verifyJWT, upload.single("image"), usersController.upDateAvater)
+mainRouter.put('/users/password', verifyJWT, usersController.updateMyPassword)
 mainRouter.get('/users/:id', verifyJWT, usersController.getUserById)
 mainRouter.get('/users', verifyJWT, authorizeRoles("ADMIN"), usersController.getAllUsers)
 mainRouter.delete('/users/:id', verifyJWT, authorizeRoles("ADMIN"), usersController.deleteUserById)
 mainRouter.put('/users/:id', verifyJWT, authorizeRoles("ADMIN"), usersController.updateUserById)
 mainRouter.get('/user/notify', verifyJWT, usersController.getNotifcationsByUser)
+mainRouter.get('/user/bookmarks', verifyJWT, usersController.getMarksByUser)
 
 //rotas de serviços
 mainRouter.post('/services', upload.array('image', 5), verifyJWT, authorizeRoles("ADMIN", "PROFESSIONAL"), servicesController.creatServicos)
@@ -41,6 +51,8 @@ mainRouter.post('/services/:id/comment', verifyJWT, servicesController.commentSe
 mainRouter.delete('/services/:id', verifyJWT, authorizeRoles("ADMIN", "PROFESSIONAL"), servicesController.deleteServiceById)
 mainRouter.get("/service/pagination", verifyJWT, servicesController.getAllServicesWithPagination)
 mainRouter.get('/services/other/:id', servicesController.getOtherServicesById)
+mainRouter.post('/services/:id/bookmark', verifyJWT, servicesController.ToogleMarkService)
+mainRouter.get('/services/:id/bookmark/check', verifyJWT, servicesController.checkMark)
 
 //rotas de agendamentos
 mainRouter.post('/appointments', verifyJWT, agendaController.createAppointment)

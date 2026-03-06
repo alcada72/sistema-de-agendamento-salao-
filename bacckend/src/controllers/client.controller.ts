@@ -6,6 +6,7 @@ export async function getAllClients(req: Request, res: Response) {
   const clients = await findAllClient()
   return res.status(200).json({ clients })
 }
+
 export async function getClientById(req: Request, res: Response) {
   const { id } = req.params
 

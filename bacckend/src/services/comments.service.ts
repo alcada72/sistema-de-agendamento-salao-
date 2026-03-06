@@ -3,10 +3,27 @@ import { getPublicURL } from "../utils/url"
 
 export const createComments = async (serviceId: string, userId: string, commentText: string) => {
   const coment = await prisma.comments.create({
+   select: {
+      id: true,
+      serviceId: true,
+      commentText: true,
+      createdAt: true,
+      user: {
+        select: {
+          id: true,
+          nome: true,
+          image: true
+        }
+      }
+    },
     data: {
       serviceId, userId, commentText
     }
   })
+
+  if (coment.user) {
+    coment.user.image = getPublicURL(coment.user.image)
+  }
   return coment
 }
 

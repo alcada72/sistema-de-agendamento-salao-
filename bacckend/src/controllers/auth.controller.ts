@@ -5,8 +5,11 @@ import { SigninSchemas } from "../schemas/signinSchemas";
 import { SignupAdminSchema } from "../schemas/signupSchemas";
 import { SignupUserAmin } from "../services/auth_admin.service";
 import { RegisterActividade } from "../services/notification.service";
+import { VerifyEmailSend } from "../services/sendVerification.service";
 import { findUserByTelefone, FindUserEmail } from "../services/user.service";
+import { generateVerificationCode } from "../utils/geradorOTP";
 import { createJWT } from "../utils/jwt";
+import { prisma } from "../utils/prisma";
 import { getPublicFormattedUrl } from "../utils/url";
 
 export const signupUserAdmin = async (req: Request, res: Response) => {
@@ -80,6 +83,8 @@ export const signupUserProfisional = async (req: Request, res: Response) => {
   if (!newAdmin) {
     return res.status(403).json({ error: 'Acesso negado' })
   }
+  await RegisterActividade(`Profissional ${newAdmin.nome} acbou de se registar`, newAdmin.id)
+
   const token = await createJWT(newAdmin.id, newAdmin.role)
 
   return res.status(201).json({
@@ -102,7 +107,7 @@ export const signupUserClient = async (req: Request, res: Response) => {
     })
   }
   const verifyUser = await FindUserEmail(safedata.data.email)
-  
+  const code = generateVerificationCode();
   if (verifyUser) {
     return res.status(403).json({ error: 'Acesso negado' })
   }
@@ -113,15 +118,33 @@ export const signupUserClient = async (req: Request, res: Response) => {
     email: safedata.data.email,
     password: haspass,
     telefone: safedata.data.telefone || null,
-    role: Role.CLIENT
+    role: Role.CLIENT,
+    emaiverificationid: code as string,
+    expiracaoEmail: new Date(Date.now() + 10 * 60 * 1000),
   })
+
+
   if (!newClient) {
     return res.status(403).json({ error: 'Acesso negado' })
   }
+
+
+  try {
+    if (newClient.email) await VerifyEmailSend(newClient.email);
+  } catch (err) {
+    console.error("Erro ao enviar e-mail:", err);
+
+    await prisma.user.delete({ where: { id: newClient.id } });
+
+    return res.status(403).json({
+      error: "Erro ao enviar e-mail de verificação. Cadastro cancelado.",
+    });
+  }
+
   const token = await createJWT(newClient.id, newClient.role)
 
   await RegisterActividade(`Cliente ${newClient.nome} acbou de se registar`, newClient.id)
-  
+
   return res.status(201).json({
     message: 'Usuario cadastrdo com sucesso',
     user: {
@@ -147,7 +170,7 @@ export const SigninUser = async (req: Request, res: Response) => {
   const verifyTelefone = await findUserByTelefone(safedata.data.credencial)
 
   if (!verifyEmail && !verifyTelefone) {
-    return res.status(400).json({ error: "E-mail ou senha incorreta!" });
+    return res.status(400).json({ error: "E-mail ou senha incorreta!--" });
   }
 
   const userCredencial = verifyTelefone || verifyEmail;
@@ -157,14 +180,13 @@ export const SigninUser = async (req: Request, res: Response) => {
   }
 
   const hasPassword = await compare(safedata.data.password, userCredencial.password)
-
-  if (!hasPassword || hasPassword === undefined || hasPassword === null) {
-    return res.status(403).json({ error: "E-mail ou senha incorreta!" });
+  if (!hasPassword) {
+    return res.status(403).json({ error: "E-mail ou senha incorreta...!" });
   }
 
   const token = await createJWT(userCredencial.id, userCredencial.role)
-  return res.status(201).json({
-    message: 'Usuario criado com sucesso',
+  return res.status(200).json({
+    message: 'Usuario logado com sucesso',
     user: {
       id: userCredencial.id,
       name: userCredencial.nome,

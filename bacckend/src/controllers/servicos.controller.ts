@@ -2,12 +2,14 @@ import { Response } from "express";
 import { commentSchema } from "../schemas/comment";
 import { paginationSchemas } from "../schemas/parpage";
 import { servicosSchema } from "../schemas/servicosSchemas";
+import { FindMark, mark, unMark } from "../services/bookMark.service";
 import { createComments } from "../services/comments.service";
+import { RegisterActividade } from "../services/notification.service";
 import { FindProfissionalById } from "../services/profissional.service";
 import { creatServicesService, deleteServiceByIdservice, findAllServices, findServiceById, getOtherServiceNotId, getServicesWithPagination, updateServiceByIdservice } from "../services/servicos.service";
+import { FindUserById } from "../services/user.service";
 import { extendedRequest } from "../types/extended-types";
 import { getPublicFormattedUrl } from "../utils/url";
-
 
 export async function creatServicos(req: extendedRequest, res: Response) {
   const safedata = servicosSchema.safeParse(req.body)
@@ -50,7 +52,7 @@ export async function creatServicos(req: extendedRequest, res: Response) {
   if (!newServico) {
     return res.status(500).json({ error: "Erro ao criar serviço" });
   }
-
+  await RegisterActividade(`o serviço ${newServico.nome} foi criado`, req.userId as string, newServico.id)
   return res.status(201).json({
     message: "Serviço criado com sucesso",
     servico: newServico
@@ -67,9 +69,11 @@ export async function commentServico(req: extendedRequest, res: Response) {
       error: safedata.error.flatten().fieldErrors
     })
   }
+  const user = await FindUserById(userId)
 
-
-
+  if (!user) {
+    return res.status(403).json({ error: "Acesso negado" });
+  }
   const service = await findServiceById(id);
   if (!service) {
     return res.status(404).json({ error: "Serviço não encontrado" });
@@ -79,8 +83,9 @@ export async function commentServico(req: extendedRequest, res: Response) {
   const comment = await createComments(id, userId, safedata.data.commentText)
 
   if (!comment) {
-    return res.status(403).json({ error: "Erro ao criar serviço" });
+    return res.status(403).json({ error: "Erro ao criar comentario" });
   }
+  await RegisterActividade(`o cliete ${user.nome} comentou no serviço ${service.nome}`, userId, service.id)
 
   return res.status(201).json({
     message: "comentario criado com sucesso",
@@ -195,4 +200,44 @@ export async function getAllServicesWithPagination(req: extendedRequest, res: Re
   const services = await getServicesWithPagination(currentPage, perPage)
 
   return res.status(200).json({ services, page: currentPage });
+}
+
+export const ToogleMarkService = async (req: extendedRequest, res: Response) => {
+  const { id } = req.params;
+  const userId = req.userId as string
+  if (!userId) {
+    return res.status(403).json({ error: "Acesso negado" });
+  }
+
+  const service = await findServiceById(id as string);
+  if (!service) {
+    return res.status(403).json({ error: "Serviço não encontrado" });
+  }
+
+  const isMarked = await FindMark(userId, id as string)
+
+  if (isMarked) {
+    await unMark(userId, id as string)
+    await RegisterActividade(`uma marcação foi removida `, userId, service.id)
+    return res.status(200).json({ message: "Serviço desmarcado", isMarked: false });
+  }
+  await mark(userId, id as string)
+  await RegisterActividade(`uma marcação foi adicionada `, userId, service.id)
+  return res.status(200).json({ message: "Serviço marcado", isMarked: true });
+}
+
+
+
+export const checkMark = async (req: extendedRequest, res: Response) => {
+  const { id } = req.params;
+  const userId = req.userId as string
+  if (!userId) {
+    return res.status(403).json({ error: "Acesso negado" });
+  }
+  const isMarked = await FindMark(userId, id as string)
+  if (isMarked) {
+    return res.status(200).json(true);
+  } else {
+    return res.status(200).json(false);
+  }
 }

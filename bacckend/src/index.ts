@@ -4,6 +4,7 @@ import helmet from "helmet";
 import http from "http";
 import path from "path";
 import { mainRouter } from "./router/main.routes";
+import { requestInterceptor } from "./utils/requestInterceptor";
 
 const app = express();
 const httpServer = http.createServer(app)
@@ -31,6 +32,7 @@ app.use(
   })
 );
 
+app.use(requestInterceptor);
 
 
 //Configuração de rotas

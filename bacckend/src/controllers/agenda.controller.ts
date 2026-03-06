@@ -78,6 +78,13 @@ export async function updateAppointmentById(req: extendedRequest, res: Response)
     ...agendado,
     date: new Date(date)
   })
+  if (agenda) {
+    await RegisterActividade(`uma agenda foi atualizada `, agenda.clientId, agenda.serviceId)
+    await sendNotifications(`uma agenda foi atualizada `, agenda.professionalId, agenda.serviceId, agenda.clientId)
+    return res.status(200).json({ message: 'agenda atualizada com sucesso', agenda })
+  } else {
+    return res.status(403).json({ error: 'erro ao atualizar a agenda' })
+  }
 }
 
 export async function deleteAppointmentById(req: Request, res: Response) {
@@ -96,8 +103,9 @@ export async function deleteAppointmentById(req: Request, res: Response) {
   const agenda = await DeleteAgendamentoById(agendado.id as string)
 
   if (agenda) {
+    await RegisterActividade(`uma agenda foi excluida `, agenda.clientId, agenda.serviceId)
+    await sendNotifications(`uma agenda foi excluida `, agenda.professionalId, agenda.serviceId, agenda.clientId)
     return res.status(200).json({ message: 'agenda excluida com sucesso' })
-
   } else {
     return res.status(403).json({ error: 'erro ao excluir a agenda' })
 
@@ -143,7 +151,6 @@ export async function comfirmAppointmentById(req: extendedRequest, res: Response
     });
   }
 
-  console.log(agendaAtualizada)
   await RegisterActividade(`uma agenda foi atualizada para ${agendaAtualizada.status} `, agendaAtualizada.clientId, agendaAtualizada.serviceId)
 
   if (agendaAtualizada.status == 'CONFIRMED' || agendaAtualizada.status == 'COMPLETED') {

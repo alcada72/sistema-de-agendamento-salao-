@@ -12,6 +12,7 @@ export const FindUserById = async (id: string) => {
       email: true,
       role: true,
       image: true,
+      isVerified: true,
       images: {
         select: {
           id: true,
@@ -36,7 +37,6 @@ export const FindUserById = async (id: string) => {
     }
   }
 
-
   return user
 }
 
@@ -46,7 +46,7 @@ export const FindUserEmail = async (email: string) => {
     where: { email }
   })
 
-  
+
   return user
 }
 
@@ -100,10 +100,12 @@ export const GetImagesByUserId = async (userId: string) => {
 export const UpdateUserById = async (
   id: string,
   data: Prisma.UserUpdateInput) => {
+
   const updatedUser = await prisma.user.update({
     where: { id },
     data
   })
+
   return updatedUser
 }
 
@@ -114,6 +116,16 @@ export const updateAvatarUser = async (
   return await prisma.user.update({
     where: { id },
     data: image,
+  });
+};
+
+export const updatePasswordUser = async (
+  id: string,
+  password: Prisma.UserUpdateInput
+) => {
+  return await prisma.user.update({
+    where: { id },
+    data: password,
   });
 };
 
