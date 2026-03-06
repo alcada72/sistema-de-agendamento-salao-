@@ -18,8 +18,8 @@ type Props = {
 };
 
 export const metadata: Metadata = {
-  title: "Buta cortes-ADMIN",
-  description: "sistema de agendamento de serviços para salões de beleza.",
+  title: "J.M.C- ADMIN - CACHIUNGO",
+  description: "Cyber, comércio e prestações de serviços, sistema de agendamento de serviços.",
 };
 
 export default function Layout({ children }: Props) {

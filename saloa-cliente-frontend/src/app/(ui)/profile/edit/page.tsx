@@ -1,8 +1,14 @@
 import { EditIfonForm } from "@/components/profile/edit-info-Form";
 import { GeneralHeader } from "@/components/ui/general-header";
+import { ActiveProgressIndicator } from "@/components/ui/spin";
 import SwitchTheme from "@/components/ui/SwitchTheme";
+import { getUserMeServiceServer } from "@/services/server/user.service";
 
-export default function Page() {
+export default async function Page() {
+  const user = await getUserMeServiceServer();
+  if (!user) {
+    return <ActiveProgressIndicator />;
+  }
   return (
     <div className="w-full flex flex-col gap-12">
       <GeneralHeader noFixed>
@@ -24,7 +30,7 @@ export default function Page() {
         </div>
       </GeneralHeader>
       <div className="p-6">
-        <EditIfonForm />
+        <EditIfonForm user={user} />
       </div>
     </div>
   );

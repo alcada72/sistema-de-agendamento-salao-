@@ -6,7 +6,7 @@ import Link from "next/link";
 export default function Page() {
   return (
     <div className="max-w-lg mx-auto mt-10 md:mt-15 px-6 tr">
-      <div className="flex justify-between items-start">
+      <div className="flex justify-between items-start mt-3.5">
         <Logo size={70} />
         <SwitchTheme hideLabel />
       </div>

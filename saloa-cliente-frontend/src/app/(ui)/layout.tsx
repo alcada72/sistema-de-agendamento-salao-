@@ -3,7 +3,13 @@ import { NavItem } from "@/components/nav/nav-item";
 import { NavLogout } from "@/components/nav/nav-logout";
 import { NavUserInfo } from "@/components/nav/nav-user-info";
 import { Logo } from "@/components/ui/logo";
-import { faBookmark, faHouse, faList } from "@fortawesome/free-solid-svg-icons";
+import {
+  faBookmark,
+  faHouse,
+  faList,
+  faStar,
+  faTools,
+} from "@fortawesome/free-solid-svg-icons";
 import { ReactNode } from "react";
 
 type Props = {
@@ -26,10 +32,16 @@ export default function Page({ children }: Props) {
               href={"/home/services"}
             />
             <NavItem
-              label={"Agenda"}
+              label={"Minha Agenda"}
               icon={faBookmark}
               href={"/home/agendamentos"}
             />
+            <NavItem
+              label={"Meus Favoritos"}
+              icon={faStar}
+              href={"/home/favorite"}
+            />
+            <NavItem label={"Configurações"} icon={faTools} href={"/config"} />
           </div>
         </div>
 

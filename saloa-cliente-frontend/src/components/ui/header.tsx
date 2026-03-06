@@ -3,8 +3,9 @@ import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 import { MenuHome } from "../home/menu-home";
+import NotifationsCard from "../notification/notifications-card";
 import { Logo } from "./logo";
-import NotifationsCard from "./notifications-card";
+
 type Props = {
   title?: string;
   hiddenBorder?: boolean;
@@ -52,3 +53,5 @@ export const Header = ({ title, hiddenBorder, showIconNotify }: Props) => {
     </div>
   );
 };
+
+

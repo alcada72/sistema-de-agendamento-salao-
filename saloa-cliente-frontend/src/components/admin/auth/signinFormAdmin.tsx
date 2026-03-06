@@ -1,5 +1,4 @@
 "use client";
-
 import { AwaitingModal } from "@/components/ui/awaitingModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,7 +41,13 @@ export const SigninFormAdmin = () => {
         placeholder={"Digite sua Senha"}
         password
       />
-      <Button label={"Entrar"} size={1} onClick={handleSubmit} uppercase />
+      <Button
+        label={"Entrar"}
+        disabled={isLoandig}
+        size={1}
+        onClick={handleSubmit}
+        uppercase
+      />
       {isLoandig && (
         <AwaitingModal
           closeAction={() => setisLoandig(false)}

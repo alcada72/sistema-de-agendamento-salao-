@@ -9,7 +9,8 @@ export type service = {
   professionalId: number,
   createdAt: Date,
   images: images[],
-  professional: User
+  professional: User,
+  comments: Comment[]
 }
 export type agenda = {
   id: string,
@@ -21,5 +22,9 @@ export type agenda = {
   client: User
 }
 
-
+export type bookMrak = {
+  id: string,
+  createdAt: Date,
+  service: service,
+}
 

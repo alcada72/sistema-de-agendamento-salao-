@@ -1,3 +1,4 @@
+import FristFavorite from "@/components/home/meu-favorito";
 import ProfissionalHome from "@/components/home/profissionais-home";
 import Proximoagendamento from "@/components/home/proximo-agendamento";
 import ServicosHome from "@/components/home/servicos-home";
@@ -10,8 +11,9 @@ export default async function Home() {
       <Header hiddenBorder />
       <Subheader />
       <Proximoagendamento />
+      <FristFavorite />
       <ServicosHome />
-      <ProfissionalHome /> 
+      <ProfissionalHome />
     </div>
   );
 }

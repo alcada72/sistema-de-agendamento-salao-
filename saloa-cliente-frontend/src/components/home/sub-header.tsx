@@ -1,6 +1,7 @@
 import { getUserMeServiceServer } from "@/services/server/user.service";
 import { Today } from "@/utils/today";
 import Link from "next/link";
+import NotifationsCard from "../notification/notifications-card";
 
 export default async function Subheader() {
     const user = await getUserMeServiceServer();
@@ -39,6 +40,8 @@ export default async function Subheader() {
           </p>
         </span>
       </div>
+
+      <NotifationsCard/>
     </div>
   );
 }

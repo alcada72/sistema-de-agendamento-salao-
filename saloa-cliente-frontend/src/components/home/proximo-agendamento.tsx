@@ -7,14 +7,11 @@ export default async function Proximoagendamento() {
   const agenda = await GetAllAgendaentosByUserServer();
 
   if (!agenda || agenda.length === 0) {
-    return (
-      <div className="p-4 text-center w-full">
-        <p>Sem próximos agendamentos</p>
-      </div>
-    );
+    return null
   }
 
   const proximo = agenda[0];
+
 
   if (!proximo.service) {
     return null;
@@ -22,6 +19,7 @@ export default async function Proximoagendamento() {
 
   return (
     <div className="w-full">
+      
       <section className="p-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold">Seu próximo horário</h2>
         <Link href={"/home/agendamentos"}>

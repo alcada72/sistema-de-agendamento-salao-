@@ -43,7 +43,7 @@ export default function Page() {
       const result = await UpdateImage(fd);
       if (result) {
         alert("Atualizado com sucesso!");
-       return router.replace("/");
+       return router.replace("/home");
       }else{
         return alert("Erro ao atualizar!");
       }

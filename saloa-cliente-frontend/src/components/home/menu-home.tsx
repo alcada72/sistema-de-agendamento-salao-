@@ -3,6 +3,7 @@ import {
   faBook,
   faBookmark,
   faHouse,
+  faStar,
   faTools,
   faUser,
   faXmark,
@@ -44,7 +45,16 @@ export const MenuHome = ({ activeMenu }: Props) => {
           href={"/home/services"}
         />
         <NavItem label={"Configurações"} icon={faTools} href={"/config"} />
-        <NavItem label={"Agenda"} icon={faBookmark} href={"/home/agendamentos"} />
+        <NavItem
+          label={"Agenda"}
+          icon={faBookmark}
+          href={"/home/agendamentos"}
+        />
+        <NavItem
+          label={"Meus Favoritos"}
+          icon={faStar}
+          href={"/home/favorite"}
+        />
       </nav>
 
       <div className="p-5 flex flex-row items-center justify-between">

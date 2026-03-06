@@ -3,8 +3,8 @@ import "./globals.css";
 import Providers from "./providers";
 
 export const metadata: Metadata = {
-  title: "Butas cortes",
-  description: "sistema de agendamento de serviços para salões de beleza.",
+  title: "J.M.C - CACHIUNGO",
+  description: "Cyber, comércio e prestações de serviços, sistema de agendamento de serviços.",
 };
 
 export default function RootLayout({

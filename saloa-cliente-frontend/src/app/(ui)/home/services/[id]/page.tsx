@@ -1,18 +1,22 @@
 "use client";
 import { AgendamentoModal } from "@/components/agendamento/AgendamentoModal";
+import CommentsSection from "@/components/comments/CommentsSection";
 import Otherservices from "@/components/servicos/other-services";
 import { ServiceIdSkaleton } from "@/components/servicos/servicos-id-skaleton";
 import { Button } from "@/components/ui/button";
+import { ButtonMark } from "@/components/ui/buttonMark";
 import CardFuncionario from "@/components/ui/card_funcionarios";
 import { GetAllServicesById } from "@/services/servico.service";
+import type { Comment } from "@/types/comments";
 import { service } from "@/types/servicos";
+import { formatCountMax } from "@/utils/format-Count";
 import { formatDuration } from "@/utils/formateDuration";
 import { FormatPrice } from "@/utils/formatePrice";
 import {
   faChevronLeft,
   faChevronRight,
+  faComment,
   faShare,
-  faStar,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/navigation";
@@ -25,7 +29,6 @@ export default function Page({ params }: Props) {
   const { id } = use(params);
 
   const Router = useRouter();
-  const [adore, setAdore] = useState(false);
   const [showmodal, setshowmodal] = useState(false);
   const [service, setservice] = useState<service | null>(null);
   const [cover, setcover] = useState(0);
@@ -56,6 +59,27 @@ export default function Page({ params }: Props) {
   if (!service) {
     return <ServiceIdSkaleton />;
   }
+
+  const handleShare = async () => {
+    if (typeof window === "undefined") return;
+
+    const shareUrl = `${window.location.origin}/home/services/${service.id}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: service.nome,
+          text: service.description?.slice(0, 100),
+          url: shareUrl,
+        });
+      } catch (error) {
+        console.log("Partilha cancelada");
+      }
+    } else {
+      await navigator.clipboard.writeText(shareUrl);
+      alert("Link copiado para a área de transferência!");
+    }
+  };
 
   const nextImage = () => {
     if (cover < service.images.length - 1) {
@@ -98,7 +122,7 @@ export default function Page({ params }: Props) {
           items-center justify-between px-2 py-2 w-full"
           >
             <button
-              className="rounded-full p-1 bg"
+              className="rounded-full p-1 bg cursor-pointer"
               onClick={() => Router.back()}
             >
               <FontAwesomeIcon
@@ -112,17 +136,12 @@ export default function Page({ params }: Props) {
             >
               {service?.nome}
             </span>
-            <nav>
+            <nav className="flex items-center gap-4">
+              <ButtonMark id={service.id} />
               <span
-                className="rounded-full size-6 bg p-1 mr-2 bg cursor-pointer"
-                onClick={() => setAdore(!adore)}
+                onClick={handleShare}
+                className="rounded-full size-6 bg p-1 cursor-pointer flex items-center justify-center"
               >
-                <FontAwesomeIcon
-                  icon={faStar}
-                  className={`size-6  ${adore && "text-yellow-500"}`}
-                />
-              </span>
-              <span className="rounded-full size-6 bg p-1">
                 <FontAwesomeIcon icon={faShare} className={"size-6"} />
               </span>
             </nav>
@@ -200,12 +219,12 @@ export default function Page({ params }: Props) {
               <span className="flex-1 truncate text-lg max-w-full font-bold">
                 {service?.nome}
               </span>
-              <span className="block truncate text-sm font-semibold">
-                10
+              <span className="block  truncate text-sm font-semibold">
                 <FontAwesomeIcon
-                  icon={faStar}
-                  className="text-amber-300 text-sm"
-                />
+                  icon={faComment}
+                  className="text-gray-300 ml-0.5 text-sm"
+                />{" "}
+                {formatCountMax(service.comments.length, 99)}
               </span>
             </div>
 
@@ -235,9 +254,7 @@ export default function Page({ params }: Props) {
               max-w-screen  overflow-hidden flex items-center justify-start py-2 px-1
                shrink-0 scroll-smooth"
               >
-                <CardFuncionario
-                  user={service.professional}
-                />
+                <CardFuncionario user={service.professional} />
               </section>
             </div>
             <div className="mt-10 mb-5">
@@ -249,15 +266,27 @@ export default function Page({ params }: Props) {
             </div>
           </div>
         </div>
-        <section className="p-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Serviços Disponiveis</h2>
+      </div>
 
-          <p onClick={() => Router.back()}>Ver mais</p>
-        </section>
-      </div>
-      <div className="shrink-0 grid grid-cols-2 md:grid-cols-4 gap-2 flex-1 p-2">
-        <Otherservices id={service.id} />
-      </div>
+      <section className="grid grid-cols-1 md:grid-cols-2">
+        <div>
+          <CommentsSection
+            serviceId={service.id}
+            commentsList={service.comments as unknown as Comment[]}
+          />
+        </div>
+
+        <div>
+          <section className="p-4 flex items-center justify-between">
+            <h2 className="text-lg font-semibold">Outros Serviços</h2>
+
+            <p onClick={() => Router.back()}>Ver mais</p>
+          </section>
+          <div className="shrink-0 grid grid-cols-2 gap-2 flex-1 p-2">
+            <Otherservices id={service.id} />
+          </div>
+        </div>
+      </section>
 
       {showmodal && (
         <AgendamentoModal

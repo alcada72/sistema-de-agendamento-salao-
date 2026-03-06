@@ -11,10 +11,10 @@ type Props = {
   placeholder: string;
   value?: string;
   filled?: boolean;
-  autoComplete?: boolean;
   icon?: IconDefinition;
   password?: boolean;
   onChange?: (newValue: string) => void;
+
   onEnter?: () => void;
 };
 
@@ -23,7 +23,6 @@ export const Input = ({
   password = false,
   value = "",
   filled = false,
-  autoComplete,
   icon,
   onChange,
   onEnter,
@@ -38,7 +37,7 @@ export const Input = ({
 
   return (
     <div
-      className={`borda flex items-center h-14 rounded-2xl border-2 transition-colors ${
+      className={`borda w-full flex items-center h-14 rounded-2xl border-2 transition-colors ${
         filled ? "bg-gray-700 border-gray-700" : "border-gray-700"
       } `}
     >

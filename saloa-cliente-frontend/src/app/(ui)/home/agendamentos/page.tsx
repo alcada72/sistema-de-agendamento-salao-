@@ -63,7 +63,7 @@ export default function Page() {
 
   return (
     <div>
-      <GeneralHeader>
+      <GeneralHeader >
         <div className="flex justify-between items-center gap-4">
           <div className="flex w-full flex-1 ">
             <section>
@@ -73,7 +73,7 @@ export default function Page() {
           <SwitchTheme hideLabel />
         </div>
       </GeneralHeader>
-      <div className="mt-[60px] md:mt-0">
+      <div className=" md:mt-0">
         <div className="p-3 pt-6 gap-4 flex flex-col">
           {agenda.map((a) => (
             <AgendamentoCard

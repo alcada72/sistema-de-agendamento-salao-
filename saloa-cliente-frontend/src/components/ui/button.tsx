@@ -24,9 +24,12 @@ export const Button = ({
         ${size === 2 && "h-10 w-32 text-md"}
         ${size === 3 && "h-8 text-xs"}
         
-        ${disabled && "pointer-envents-none opacity-50"}`}
+        ${disabled && "pointer-events-none opacity-50 bg-transparent border-gray-500/50 text-gray-500/50"}`}
     >
-      {label}
+      {disabled ? <div className="size-5 animate-spin  bg-transparent rounded-full
+      border-blue-500  border-4 border-l-transparent " >
+
+      </div> : label}
     </div>
   );
 };

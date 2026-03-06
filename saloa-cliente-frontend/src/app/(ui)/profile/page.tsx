@@ -36,7 +36,7 @@ export default async function Profile() {
           <NavLogout hiddenLabel />
         </div>
       </GeneralHeader>
-      <div className="mt-[110px] md:mt-0 w-full flex flex-col items-center">
+      <div className="md:mt-0 w-full flex flex-col items-center">
         <div className="mt-10 md:mt-5 flex flex-col items-center overflow-hidden">
           <div
             className="overflow-hidden size-40  

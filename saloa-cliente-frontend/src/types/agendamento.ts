@@ -1,4 +1,4 @@
-import { professional, service } from "./servicos";
+import { service } from "./servicos";
 import { User } from "./user";
 
 export type agendamento = {
@@ -8,7 +8,7 @@ export type agendamento = {
   status: "CONFIRMED" | "PENDING" | "CANCELLED",
   createdAt: Date,
   client: User,
-  professional: professional,
+  professional: User,
   service: service
 }
 

@@ -1,10 +1,16 @@
 import { EditPassForm } from "@/components/profile/edit-pass-Form";
 import { GeneralHeader } from "@/components/ui/general-header";
+import { ActiveProgressIndicator } from "@/components/ui/spin";
 import SwitchTheme from "@/components/ui/SwitchTheme";
+import { getUserMeServiceServer } from "@/services/server/user.service";
 
-export default function Page() {
+export default async function Page() {
+  const user = await getUserMeServiceServer();
+  if (!user) {
+    return <ActiveProgressIndicator />;
+  }   
   return (
-    <div className="w-full flex flex-col gap-12">
+    <div className="w-full flex flex-col gap-12 relative min-h-screen">
       <GeneralHeader noFixed>
         <div className="flex justify-between items-center gap-4 mt-5 md:mt-0">
           <div className="flex flex-col w-full flex-1">
@@ -23,8 +29,8 @@ export default function Page() {
           <SwitchTheme hideLabel />
         </div>
       </GeneralHeader>
-      <div className="p-6">
-        <EditPassForm />
+      <div className="p-6 ">
+        <EditPassForm user={user} />
       </div>
     </div>
   );

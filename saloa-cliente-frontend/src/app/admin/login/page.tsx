@@ -12,7 +12,7 @@ export default function Page() {
       <h1 className="mt-0 md:mt-3 text-2xl ">
         Entre na sua conta de administrador
       </h1>
-      <span className="text-gray-400">Para gerenciar a o sistema </span>
+      <span className="text-gray-400">Para gerenciar o sistema </span>
       <div className=" mt-9 mb-14 flex flex-col gap-4">
         <SigninFormAdmin />
       </div>
