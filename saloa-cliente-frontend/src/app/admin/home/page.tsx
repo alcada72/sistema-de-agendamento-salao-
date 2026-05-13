@@ -3,7 +3,7 @@ import MainHome from "@/components/admin/home/main";
 import { Header } from "@/components/ui/header";
 import { pingAdmin } from "@/services/admin/server/user.service";
 import { redirect } from "next/navigation";
-
+export const dynamic = 'force-dynamic';
 export default async function Page() {
   const loged= await pingAdmin()
   if (!loged) {

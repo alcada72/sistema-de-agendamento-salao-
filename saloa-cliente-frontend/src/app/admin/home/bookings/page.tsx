@@ -3,6 +3,7 @@ import { Header } from "@/components/ui/header";
 import { GetAllAgendaentosServer } from "@/services/admin/server/service-server.service";
 import { formatHour, formatRelativeTime } from "@/utils/format-ralative";
 
+export const dynamic = 'force-dynamic';
 export default async function page() {
   const agendamentos = await GetAllAgendaentosServer();
   return (

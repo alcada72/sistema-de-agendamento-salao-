@@ -1,8 +1,6 @@
-import { Logo } from "@/components/ui/logo";
-import { ActiveProgressIndicator } from "@/components/ui/spin";
 import { pingAdmin } from "@/services/admin/server/user.service";
 import { redirect } from "next/navigation";
-
+export const dynamic = 'force-dynamic';
 export default async function Page() {
   const loged = await pingAdmin();
   if (!loged) {
