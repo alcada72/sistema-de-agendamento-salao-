@@ -4,8 +4,8 @@
   "description": "Back-End do sistema de agendamento de serviços para salões de beleza.",
   "main": "src/index.ts",
   "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=8.0.0"
+    "node": "22.21.0",
+    "npm": ">=11.6.2"
   },
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only --env-file=.env ./src/index.ts",
