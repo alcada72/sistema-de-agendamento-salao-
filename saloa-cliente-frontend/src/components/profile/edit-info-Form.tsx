@@ -9,6 +9,7 @@ import { Avatar } from "../comments/avatar";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 
+
 type Props = {
   user: User;
 };
@@ -43,22 +44,19 @@ export const EditIfonForm = ({ user }: Props) => {
     if (avatar) {
       fd.append("image", avatar);
     }
-    
+
     try {
       setisLoading(true);
-      const result = await UpdateUserByIdService({
+      await UpdateUserByIdService({
         nome: nomeField,
         email: emailField,
         telefone: telefoneField,
       });
+      
+      if (avatar) await UpdateImage(fd);
 
-      const resimault = await UpdateImage(fd);
-      if (result && resimault) {
-        alert("Atualizado com sucesso!");
-        return router.replace("/profile");
-      } else {
-        return alert("Erro ao atualizar!");
-      }
+      alert("Atualizado com sucesso!");
+      return router.replace("/profile");
     } catch (error) {
       console.log(error);
     } finally {

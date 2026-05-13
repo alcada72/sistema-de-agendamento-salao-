@@ -9,5 +9,5 @@ export type Notification = {
   isRead: boolean,
   createdAt: Date,
   userId: null,
-  sender: User | null
+  sender: User | null,
 }

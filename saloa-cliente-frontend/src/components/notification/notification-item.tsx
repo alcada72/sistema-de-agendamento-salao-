@@ -11,7 +11,7 @@ export default function Notificationitem({ notification }: Props) {
     <div className="cursor-pointer block relative transition-all duration-150">
       <div className="hover:bg-gray-600/10 rounded-lg p-2  flex items-center justify-between w-full gap-1.5">
         <div className="flex items-start gap-2">
-          <Avatar src={notification.sender?.image || "/logoDark.png"} />
+          <Avatar size={2} src={notification.sender?.image || "/logoDark.png"} />
           <div className="flex flex-col">
             <div className="flex-1">
               <p className="text-sm font-medium ">

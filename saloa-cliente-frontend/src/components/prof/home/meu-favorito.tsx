@@ -1,6 +1,6 @@
+import { ServiceCardMini } from "@/components/ui/card-service-mini";
 import { getBookmarksServer } from "@/services/server/user.service";
 import Link from "next/link";
-import { ServiceCardMini } from "../ui/card-service-mini";
 
 export default async function FristFavorite() {
   const favorito = await getBookmarksServer();

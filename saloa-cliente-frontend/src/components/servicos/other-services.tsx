@@ -4,6 +4,7 @@ import { service } from "@/types/servicos";
 import { useEffect, useState } from "react";
 import { CardService } from "../ui/card-service";
 
+
 export default function Otherservices({ id }: { id: string }) {
   const [serviceOthers, setserviceOthers] = useState<service[]>([]);
 

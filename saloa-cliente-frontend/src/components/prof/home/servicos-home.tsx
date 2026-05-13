@@ -1,6 +1,6 @@
+import { CardService } from "@/components/ui/card-service";
 import { GetServicesLimitedServer } from "@/services/server/service-server.service";
 import Link from "next/link";
-import { CardService } from "../ui/card-service";
 
 export default async function ServicosHome() {
   const service = await GetServicesLimitedServer();

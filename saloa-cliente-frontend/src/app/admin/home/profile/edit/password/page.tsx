@@ -1,8 +1,19 @@
 import { EditPassForm } from "@/components/profile/edit-pass-Form";
 import { GeneralHeader } from "@/components/ui/general-header";
+import { ActiveProgressIndicator } from "@/components/ui/spin";
 import SwitchTheme from "@/components/ui/SwitchTheme";
+import { getUserMeServiceServerAdmin } from "@/services/admin/server/user.service";
 
-export default function Page() {
+export default async function Page() {
+    const user = await getUserMeServiceServerAdmin();
+  
+    if (!user) {
+      return (
+        <div className="w-full min-h-dvh items-center justify-center flex">
+          <ActiveProgressIndicator />
+        </div>
+      );
+    }
   return (
     <div className="w-full flex flex-col gap-12">
       <GeneralHeader noFixed>
@@ -24,7 +35,7 @@ export default function Page() {
         </div>
       </GeneralHeader>
       <div className="p-6">
-        <EditPassForm />
+        <EditPassForm user={user} />
       </div>
     </div>
   );

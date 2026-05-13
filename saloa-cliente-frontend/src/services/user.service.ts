@@ -10,7 +10,6 @@ export const getUserMeService = async (): Promise<User> => {
     return userInfo
   }
   return response.data.user
-
 }
 
 export const getUserByIdService = async (id: string): Promise<User> => {

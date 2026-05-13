@@ -29,6 +29,10 @@ export const SignupForm = () => {
       setisLoandig(false);
       router.replace("/verification");
     }
+    if (!result) {
+      setmessage("Erro ao criar usuario");
+      setisLoandig(false);
+    }
   };
 
   return (

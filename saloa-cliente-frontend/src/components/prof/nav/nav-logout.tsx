@@ -1,6 +1,5 @@
 "use client";
 
-import { clearAuthAdmin } from "@/utils/auth.admin";
 import { clearAuthProf } from "@/utils/auth.prof";
 import { faArrowRightFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

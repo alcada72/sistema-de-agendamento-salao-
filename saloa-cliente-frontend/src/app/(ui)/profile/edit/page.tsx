@@ -3,9 +3,10 @@ import { GeneralHeader } from "@/components/ui/general-header";
 import { ActiveProgressIndicator } from "@/components/ui/spin";
 import SwitchTheme from "@/components/ui/SwitchTheme";
 import { getUserMeServiceServer } from "@/services/server/user.service";
+import { User } from "@/types/user";
 
 export default async function Page() {
-  const user = await getUserMeServiceServer();
+  const user = await getUserMeServiceServer() as User;
   if (!user) {
     return <ActiveProgressIndicator />;
   }

@@ -20,10 +20,12 @@ export const SigninForm = () => {
     const result = await SigninService(emailField, passwordField);
 
     if (!result) {
-      return alert("E-mailou senha incorreta");
+      setmessage("E-mail ou senha incorreta");
+      setisLoandig(false);
+      return alert("E-mail ou senha incorreta");
     }
 
-    alert("Usuario logado com sucesso");
+    setmessage("Logado com sucesso");
     setisLoandig(false);
     return router.replace("/home");
   };

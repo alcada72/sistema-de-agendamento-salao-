@@ -1,4 +1,7 @@
 "use client";
+import { NavItem } from "@/components/nav/nav-item";
+import { Logo } from "@/components/ui/logo";
+import SwitchTheme from "@/components/ui/SwitchTheme";
 import {
   faBook,
   faBookmark,
@@ -9,9 +12,7 @@ import {
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { NavItem } from "../nav/nav-item";
-import { Logo } from "../ui/logo";
-import SwitchTheme from "../ui/SwitchTheme";
+
 
 type Props = {
   activeMenu: () => void;
