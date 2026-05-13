@@ -2,6 +2,7 @@ import { CardService } from "@/components/ui/card-service";
 import { Header } from "@/components/ui/header";
 import { GetAllServices } from "@/services/servico.service";
 
+export const dynamic = 'force-dynamic';
 export default async function Page() {
   const result = await GetAllServices();
   return (

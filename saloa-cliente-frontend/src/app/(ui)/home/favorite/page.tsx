@@ -3,6 +3,8 @@ import { GeneralHeader } from "@/components/ui/general-header";
 import SwitchTheme from "@/components/ui/SwitchTheme";
 import { getBookmarksServer } from "@/services/server/user.service";
 
+export const dynamic = 'force-dynamic';
+
 export default async function Page() {
   const result = await getBookmarksServer();
 

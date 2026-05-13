@@ -8,6 +8,7 @@ import { service } from "@/types/servicos";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 
+export const dynamic = 'force-dynamic';
 export default function Page() {
   const [service, setservice] = useState<service[]>([]);
   const [showModal, setshowModal] = useState(false);
