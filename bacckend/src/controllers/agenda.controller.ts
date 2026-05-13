@@ -6,8 +6,10 @@ import { RegisterActividade, sendNotifications } from "../services/notification.
 import { FindUserById } from "../services/user.service";
 import { extendedRequest } from "../types/extended-types";
 
-export async function createAppointment(req: extendedRequest, res: Response) {
-  const userId = req.userId;
+export async function createAppointment(req: Request, res: Response) {
+  const reqExtended = req as extendedRequest
+
+  const userId = reqExtended.userId;
   const safedata = agendaSchemas.safeParse(req.body);
   if (!safedata.success) {
     return res.status(400).json({
@@ -36,7 +38,7 @@ export async function createAppointment(req: extendedRequest, res: Response) {
   return res.status(201).json({ message: "Agendamento criado com sucesso", agenda });
 }
 
-export async function getAppointmentById(req: extendedRequest, res: Response) {
+export async function getAppointmentById(req: Request, res: Response) {
   const { id } = req.params
 
   if (!id.trim()) {
@@ -52,13 +54,13 @@ export async function getAppointmentById(req: extendedRequest, res: Response) {
   res.status(200).json({ agenda })
 }
 
-export async function getAllAppointments(req: extendedRequest, res: Response) {
+export async function getAllAppointments(req: Request, res: Response) {
   const agenda = await FindAllAgendamentos()
 
   res.status(200).json({ agenda })
 }
 
-export async function updateAppointmentById(req: extendedRequest, res: Response) {
+export async function updateAppointmentById(req: Request, res: Response) {
   const { id } = req.params
   const { date } = req.body;
 
@@ -112,7 +114,7 @@ export async function deleteAppointmentById(req: Request, res: Response) {
   }
 }
 
-export async function comfirmAppointmentById(req: extendedRequest, res: Response) {
+export async function comfirmAppointmentById(req: Request, res: Response) {
   const { id } = req.params;
   const { status } = req.body;
 
@@ -124,7 +126,6 @@ export async function comfirmAppointmentById(req: extendedRequest, res: Response
     return res.status(400).json({ error: "Informe o status do agendamento" });
   }
 
-  // ✅ valida enum
   if (!Object.values(AgendamentoStatus).includes(status)) {
     return res.status(400).json({
       error: "Status inválido",

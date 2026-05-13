@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 async function main() {
   const pass = await hash("123456", 10);
   const admin = await prisma.user.upsert({
-    where: { email: "admin@salon.com" },
+    where: { email: "admin@jmc.com" },
     update: {},
     create: {
       nome: "Admin",
@@ -29,7 +29,7 @@ async function main() {
 
   await prisma.service.createMany({
     data: [
-      { nome: "Corte Feminino", duration: 45, price: 150.0, professionalId: prof.id },
+      { nome: "Corte Feminino", duration: 45, price: 100.0, professionalId: prof.id },
       { nome: "Corte Masculino", duration: 60, price: 1000.00, professionalId: prof.id },
       { nome: "Manicure", duration: 30, price: 700.0, professionalId: prof.id }
     ]

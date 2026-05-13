@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only --env-file=.env ./src/index.ts",
     "build": "tsc",
-    "start": "node build/src/index.js"
+    "start": "node build/src/index.js",
+    "seed": "node build/prisma/seed.js"
   },
   "keywords": [],
   "author": "Alçada Kilundica",

@@ -1,6 +1,5 @@
 import type { Request, Response } from "express";
 import { FindAllAgendamentoByProfissional, FindAllProfissionais, FindProfissionalById } from "../services/profissional.service";
-import { extendedRequest } from "../types/extended-types";
 
 
 export async function getAllProfessionals(req: Request, res: Response) {
@@ -9,7 +8,7 @@ export async function getAllProfessionals(req: Request, res: Response) {
   res.status(200).json({ profissionais })
 }
 
-export async function GetAllAgendaByProfissional(req: extendedRequest, res: Response) {
+export async function GetAllAgendaByProfissional(req: Request, res: Response) {
   const { id } = req.params
 
   if (!id) {

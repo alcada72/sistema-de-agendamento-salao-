@@ -1,4 +1,4 @@
-import { NextFunction, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { FindUserById } from "../services/user.service";
 import { extendedRequest } from "../types/extended-types";
@@ -12,7 +12,7 @@ export const createJWT = (id: string, role: string) => {
 };
 
 export const verifyJWT = async (
-  req: extendedRequest,
+  req: Request,
   res: Response,
   next: NextFunction
 ) => {
@@ -20,6 +20,8 @@ export const verifyJWT = async (
   if (!authHeader) {
     return res.status(403).json({ error: "Token não fornecido" });
   }
+
+  const reqExtended = req as extendedRequest;
 
   const token = authHeader.split(" ")[1];
 
@@ -33,8 +35,8 @@ export const verifyJWT = async (
     if (!user) {
       return res.status(403).json({ error: "Acesso Negado" });
     }
-    req.userId = user.id;
-    req.role = decoded.role;
+    reqExtended.userId = user.id;
+    reqExtended.role = decoded.role;
     next();
   } catch (error) {
     return res.status(403).json({ error: "Token inválido ou expirado" });
@@ -42,12 +44,18 @@ export const verifyJWT = async (
 };
 
 export const authorizeRoles = (...roles: string[]) => {
-  return (req: extendedRequest, res: Response, next: NextFunction) => {
-    if (!req.role) {
+  return (req: Request, res: Response, next: NextFunction) => {
+     const reqExtended = req as extendedRequest;
+
+    if (!reqExtended.userId) {
       return res.status(401).json({ error: "Não autenticado" });
     }
 
-    if (!roles.includes(req.role)) {
+    if (!reqExtended.role) {
+      return res.status(401).json({ error: "Não autenticado" });
+    }
+
+    if (!roles.includes(reqExtended.role)) {
       return res.status(403).json({ error: "Acesso negado" });
     }
 

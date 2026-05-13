@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import { commentSchema } from "../schemas/comment";
 import { paginationSchemas } from "../schemas/parpage";
 import { servicosSchema } from "../schemas/servicosSchemas";
@@ -11,7 +11,9 @@ import { FindUserById } from "../services/user.service";
 import { extendedRequest } from "../types/extended-types";
 import { getPublicFormattedUrl } from "../utils/url";
 
-export async function creatServicos(req: extendedRequest, res: Response) {
+export async function creatServicos(req: Request, res: Response) {
+  const reqExtended = req as extendedRequest
+
   const safedata = servicosSchema.safeParse(req.body)
   if (!safedata.success) {
     return res.status(400).json({
@@ -19,14 +21,14 @@ export async function creatServicos(req: extendedRequest, res: Response) {
     })
   }
 
-  const images = req.files as Express.Multer.File[]
+  const images = reqExtended.files as Express.Multer.File[]
 
 
   if (images.length === 0) {
     return res.status(400).json({ error: "Nenhum arquivo enviado" });
   }
 
-  if (!req.userId || req.role !== 'ADMIN') {
+  if (!reqExtended.userId || reqExtended.role !== 'ADMIN') {
     return res.status(403).json({ error: "Acesso negado" });
   }
 
@@ -52,15 +54,17 @@ export async function creatServicos(req: extendedRequest, res: Response) {
   if (!newServico) {
     return res.status(500).json({ error: "Erro ao criar serviço" });
   }
-  await RegisterActividade(`o serviço ${newServico.nome} foi criado`, req.userId as string, newServico.id)
+  await RegisterActividade(`o serviço ${newServico.nome} foi criado`, reqExtended.userId as string, newServico.id)
   return res.status(201).json({
     message: "Serviço criado com sucesso",
     servico: newServico
   });
 }
 
-export async function commentServico(req: extendedRequest, res: Response) {
-  const userId = req.userId as string
+export async function commentServico(req: Request, res: Response) {
+  const reqExtended = req as extendedRequest
+
+  const userId = reqExtended.userId as string
   const { id } = req.params;
 
   const safedata = commentSchema.safeParse(req.body)
@@ -93,7 +97,7 @@ export async function commentServico(req: extendedRequest, res: Response) {
   });
 }
 
-export async function getServiceById(req: extendedRequest, res: Response) {
+export async function getServiceById(req: Request, res: Response) {
   const { id } = req.params;
   if (!id.trim()) {
     return res.status(400).json({ error: "ID do serviço é obrigatório" });
@@ -105,13 +109,13 @@ export async function getServiceById(req: extendedRequest, res: Response) {
   return res.status(200).json({ service });
 }
 
-export async function getAllServices(req: extendedRequest, res: Response) {
+export async function getAllServices(req: Request, res: Response) {
   const services = await findAllServices();
 
   return res.status(200).json({ services });
 }
 
-export async function updateServiceById(req: extendedRequest, res: Response) {
+export async function updateServiceById(req: Request, res: Response) {
   const { id } = req.params;
   const safedata = servicosSchema.partial().safeParse(req.body);
   if (!safedata.success) {
@@ -119,8 +123,9 @@ export async function updateServiceById(req: extendedRequest, res: Response) {
       error: safedata.error.flatten().fieldErrors
     });
   }
+  const reqExtended = req as extendedRequest
 
-  if (!req.userId || (req.role !== 'ADMIN' && req.role !== 'PROFESSIONAL')) {
+  if (!reqExtended.userId || (reqExtended.role !== 'ADMIN' && reqExtended.role !== 'PROFESSIONAL')) {
     return res.status(403).json({ error: "Acesso negado" });
   }
   const service = await findServiceById(id as string)
@@ -139,9 +144,11 @@ export async function updateServiceById(req: extendedRequest, res: Response) {
   return res.status(200).json({ message: "Serviço atualizado com sucesso", service: updatedService });
 }
 
-export async function deleteServiceById(req: extendedRequest, res: Response) {
+export async function deleteServiceById(req: Request, res: Response) {
   const { id } = req.params;
-  if (!req.userId || (req.role !== 'ADMIN' && req.role !== 'PROFESSIONAL')) {
+  const reqExtended = req as extendedRequest
+
+  if (!reqExtended.userId || (reqExtended.role !== 'ADMIN' && reqExtended.role !== 'PROFESSIONAL')) {
     return res.status(403).json({ error: "Acesso negado" });
   }
   const service = await findServiceById(id as string)
@@ -155,7 +162,7 @@ export async function deleteServiceById(req: extendedRequest, res: Response) {
   return res.status(200).json({ message: "Serviço deletado com sucesso", service: deletedService });
 }
 
-export async function getOtherServicesById(req: extendedRequest, res: Response) {
+export async function getOtherServicesById(req: Request, res: Response) {
   const { id } = req.params;
   const safeData = paginationSchemas.safeParse(req.query)
   if (!safeData.success) {
@@ -184,7 +191,7 @@ export async function getOtherServicesById(req: extendedRequest, res: Response) 
   return res.status(200).json({ services });
 }
 
-export async function getAllServicesWithPagination(req: extendedRequest, res: Response) {
+export async function getAllServicesWithPagination(req: Request, res: Response) {
 
   const safeData = paginationSchemas.safeParse(req.query)
   if (!safeData.success) {
@@ -202,9 +209,11 @@ export async function getAllServicesWithPagination(req: extendedRequest, res: Re
   return res.status(200).json({ services, page: currentPage });
 }
 
-export const ToogleMarkService = async (req: extendedRequest, res: Response) => {
+export const ToogleMarkService = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const userId = req.userId as string
+  const reqExtended = req as extendedRequest
+
+  const userId = reqExtended.userId as string
   if (!userId) {
     return res.status(403).json({ error: "Acesso negado" });
   }
@@ -228,9 +237,11 @@ export const ToogleMarkService = async (req: extendedRequest, res: Response) => 
 
 
 
-export const checkMark = async (req: extendedRequest, res: Response) => {
+export const checkMark = async (req: Request, res: Response) => {
   const { id } = req.params;
-  const userId = req.userId as string
+  const reqExtended = req as extendedRequest
+
+  const userId = reqExtended.userId as string
   if (!userId) {
     return res.status(403).json({ error: "Acesso negado" });
   }

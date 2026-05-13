@@ -1,5 +1,5 @@
 import { hash } from "bcrypt-ts";
-import { Response } from "express";
+import { Request, Response } from "express";
 import { updatePasswordSchema, upDateUserSchema } from "../schemas/update-user";
 import { getAllMarks } from "../services/bookMark.service";
 import { getUserNotifications, RegisterActividade, sendNotifications } from "../services/notification.service";
@@ -7,8 +7,9 @@ import { DeleteUserById, FindAllUsers, FindUserById, updateAvatarUser, updatePas
 import { extendedRequest } from "../types/extended-types";
 import { getPublicFormattedUrl } from "../utils/url";
 
-export async function getMe(req: extendedRequest, res: Response) {
-  const id = req.userId
+export async function getMe(req: Request, res: Response) {
+  const reqExtended = req as extendedRequest
+  const id = reqExtended.userId
   if (!id) {
     console.log("usuario não encontrado")
     return res.status(401).json({ error: "Não autenticado" });
@@ -21,12 +22,11 @@ export async function getMe(req: extendedRequest, res: Response) {
   return res.status(200).json({ user });
 }
 
-export async function updateMe(req: extendedRequest, res: Response) {
-  const id = req.userId;
+export async function updateMe(req: Request, res: Response) {
+  const reqExtended = req as extendedRequest
+  const id = reqExtended.userId;
   const safedata = upDateUserSchema.safeParse(req.body)
-  console.log(safedata)
-  console.log(req.body);
-  
+
   if (!safedata.success) {
     return res.status(401).json({
       error: safedata.error.flatten().fieldErrors
@@ -50,8 +50,9 @@ export async function updateMe(req: extendedRequest, res: Response) {
   return res.status(200).json({ user: updatedUser });
 }
 
-export async function updateMyPassword(req: extendedRequest, res: Response) {
-  const id = req.userId;
+export async function updateMyPassword(req: Request, res: Response) {
+  const reqExtended = req as extendedRequest
+  const id = reqExtended.userId;
   const safedata = updatePasswordSchema.safeParse(req.body)
 
   if (!safedata.success) {
@@ -79,9 +80,10 @@ export async function updateMyPassword(req: extendedRequest, res: Response) {
   return res.status(200).json({ user: updatedUser });
 }
 
-export async function deleteMe(req: extendedRequest, res: Response) {
-  // Implementation here
-  const id = req.userId;
+export async function deleteMe(req: Request, res: Response) {
+  const reqExtended = req as extendedRequest
+
+  const id = reqExtended.userId;
   if (!id) {
     return res.status(401).json({ error: "Não autenticado" });
   }
@@ -98,7 +100,8 @@ export async function deleteMe(req: extendedRequest, res: Response) {
   return res.status(200).json({ message: 'Usuário deletado com sucesso', user: deletedUser });
 }
 
-export async function getUserById(req: extendedRequest, res: Response) {
+export async function getUserById(req: Request, res: Response) {
+
   const { id } = req.params;
   const user = await FindUserById(id as string);
 
@@ -109,8 +112,10 @@ export async function getUserById(req: extendedRequest, res: Response) {
   return res.status(200).json({ user });
 }
 
-export async function getAllUsers(req: extendedRequest, res: Response) {
-  const id = req.userId;
+export async function getAllUsers(req: Request, res: Response) {
+  const reqExtended = req as extendedRequest
+
+  const id = reqExtended.userId;
   if (!id) {
     return res.status(401).json({ error: "Não autenticado" });
   }
@@ -118,7 +123,7 @@ export async function getAllUsers(req: extendedRequest, res: Response) {
   return res.status(200).json({ users });
 }
 
-export async function deleteUserById(req: extendedRequest, res: Response) {
+export async function deleteUserById(req: Request, res: Response) {
   const { id } = req.params;
   const user = await FindUserById(id);
   if (!user) {
@@ -132,7 +137,7 @@ export async function deleteUserById(req: extendedRequest, res: Response) {
   return res.status(200).json({ message: 'Usuário deletado com sucesso', user: deletedUser });
 }
 
-export async function updateUserById(req: extendedRequest, res: Response) {
+export async function updateUserById(req: Request, res: Response) {
   const { id } = req.params;
   const safedata = upDateUserSchema.safeParse(req.body)
   if (!safedata.success) {
@@ -152,8 +157,10 @@ export async function updateUserById(req: extendedRequest, res: Response) {
   return res.status(200).json({ user: updatedUser });
 }
 
-export async function postImagem(req: extendedRequest, res: Response) {
-  const id = req.userId as string;
+export async function postImagem(req: Request, res: Response) {
+  const reqExtended = req as extendedRequest
+
+  const id = reqExtended.userId as string;
 
   if (!req.file) {
     return res.status(400).json({ error: "Nenhum arquivo enviado" });
@@ -168,15 +175,20 @@ export async function postImagem(req: extendedRequest, res: Response) {
 
 
   const imagem = await UserCreateImagem(publicUrl, id)
+
   if (!imagem) {
-    res.status(403).json({ message: "Erro ao postar" })
+    return res.status(403).json({
+      message: "Erro ao postar"
+    });
   }
   res.status(201).json({ message: "Imagem Postada com sucesso", imagem })
 
 }
 
-export async function upDateAvater(req: extendedRequest, res: Response) {
-  const id = req.userId as string;
+export async function upDateAvater(req: Request, res: Response) {
+  const reqExtended = req as extendedRequest
+
+  const id = reqExtended.userId as string;
 
   if (!req.file) {
     return res.status(403).json({ error: "Nenhum arquivo enviado" });
@@ -199,8 +211,10 @@ export async function upDateAvater(req: extendedRequest, res: Response) {
   res.status(201).json({ message: "Imagem de perfil atualizada com sucesso com sucesso", })
 }
 
-export async function getNotifcationsByUser(req: extendedRequest, res: Response) {
-  const id = req.userId;
+export async function getNotifcationsByUser(req: Request, res: Response) {
+  const reqExtended = req as extendedRequest
+
+  const id = reqExtended.userId;
   if (!id) {
     return res.status(401).json({ error: "Não autenticado" });
   }
@@ -211,8 +225,11 @@ export async function getNotifcationsByUser(req: extendedRequest, res: Response)
   res.json({ noticatios })
 }
 
-export const getMarksByUser = async (req: extendedRequest, res: Response) => {
-  const userId = req.userId as string
+export const getMarksByUser = async (req: Request, res: Response) => {
+
+  const reqExtended = req as extendedRequest
+
+  const userId = reqExtended.userId as string
   if (!userId) {
     return res.status(403).json({ error: "Acesso negado" });
   }

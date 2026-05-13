@@ -47,9 +47,11 @@ export const verifacationEmail = async (req: Request, res: Response) => {
   return res.status(200).json({ message: "E-mail confirmado com sucesso!" });
 };
 
-export const reeSendEmail = async (req: extendedRequest, res: Response) => {
+export const reeSendEmail = async (req: Request, res: Response) => {
+  const reqExtended = req as extendedRequest
+
   const user = await prisma.user.findUnique({
-    where: { id: req.userId as string },
+    where: { id: reqExtended.userId as string },
   });
 
   if (!user) return res.status(403).json({ error: "Acesso negado" });
