@@ -188,26 +188,26 @@ export default function Page({ params }: Props) {
           >
             <div className=" h-full items-center flex">
               <button
-                className="rounded-full p-3 bg-neutral-400/20 
+                className="rounded-full  p-3 bg-neutral-400/20 
           backdrop-blur-[1px] items-center flex"
                 onClick={prevImage}
               >
                 <FontAwesomeIcon
                   icon={faChevronLeft}
-                  className="text-lg font-extrabold text-gray-950"
+                  className="text-lg font-extrabold cursor-pointer text-gray-950"
                 />
               </button>
             </div>
 
             <div className=" h-full items-center flex">
               <button
-                className="rounded-full p-3 bg-neutral-400/20 
+                className="rounded-full p-3 cursor-pointer bg-neutral-400/20 
           backdrop-blur-[1px] items-center flex"
                 onClick={nextImage}
               >
                 <FontAwesomeIcon
                   icon={faChevronRight}
-                  className="text-lg font-extrabold text-gray-950"
+                  className="text-lg font-extrabold cursor-pointer text-gray-950"
                 />
               </button>
             </div>

@@ -38,5 +38,6 @@ export async function getAppointmentsByUserId(req: Request, res: Response) {
   if (!agenda) {
     return res.status(403).json({ message: 'usuario não tem agendamento' })
   }
+  
   return res.status(200).json({ agenda })
 }

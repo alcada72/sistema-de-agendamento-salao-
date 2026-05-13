@@ -79,7 +79,7 @@ export function AgendamentoCard({
       <div className="absolute top-0 right-0 z-40 flex flex-col items-end-safe gap-2">
         {showOptios && (
           <button
-            className="flex items-center gap-2 m-1"
+            className="flex items-center gap-2 m-1 cursor-pointer"
             onClick={() => setmore(!more)}
           >
             <FontAwesomeIcon

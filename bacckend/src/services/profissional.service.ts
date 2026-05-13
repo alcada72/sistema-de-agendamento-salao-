@@ -44,3 +44,47 @@ export const FindAllProfissionais = async () => {
   }
   return aliatorio
 }
+
+export const FindAllAgendamentoByProfissional = async (professionalId: string) => {
+
+  const agendamentos = await prisma.agendamento.findMany({
+    select: {
+      id: true,
+      date: true,
+      endDate: true,
+      status: true,
+      createdAt: true,
+      client: {
+        select: {
+          id: true,
+          nome: true,
+          image: true
+        }
+      },
+      service: {
+        select: {
+          id: true,
+          nome: true,
+          description: true,
+          duration: true,
+          price: true,
+          images: true,
+        }
+      },
+    },
+    where: {
+      professionalId
+    },
+    orderBy: { date: 'desc' }
+  })
+  for (const agendImdex in agendamentos) {
+    const images = agendamentos[agendImdex].service.images;
+    agendamentos[agendImdex].client.image = getPublicURL(
+      agendamentos[agendImdex].client.image || undefined);
+
+    for (const imagesIndex in images) {
+      images[imagesIndex].url = getPublicURL(images[imagesIndex].url)
+    }
+  }
+  return agendamentos
+}

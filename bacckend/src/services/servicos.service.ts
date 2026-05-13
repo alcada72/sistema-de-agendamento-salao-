@@ -96,11 +96,13 @@ export const findServiceById = async (id: string) => {
         }
       },
       comments: {
+        orderBy:{createdAt:'desc'},
         select: {
           id: true,
           serviceId: true,
           commentText: true,
           createdAt: true,
+          
           user: {
             select: {
               id: true,

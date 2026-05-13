@@ -1,7 +1,7 @@
 "use client";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { MenuHome } from "../home/menu-home";
 import NotifationsCard from "../notification/notifications-card";
 import { Logo } from "./logo";
@@ -13,16 +13,6 @@ type Props = {
 };
 export const Header = ({ title, hiddenBorder, showIconNotify }: Props) => {
   const [showMenu, setShowMenu] = useState(false);
-
-  useEffect(() => {
-    return () => {
-      if (showMenu) {
-        document.body.style.overflow = "hidden";
-      } else {
-        document.body.style.overflow = "auto";
-      }
-    };
-  }, [showMenu]);
 
   return (
     <div
@@ -41,17 +31,17 @@ export const Header = ({ title, hiddenBorder, showIconNotify }: Props) => {
       <div className="flex-1 w-full text-2xl flex items-center justify-center font-medium select-none ">
         <span> {title} </span>
       </div>
-      <div
-        className="lg:hidden cursor-pointer"
-        onClick={() => setShowMenu(true)}
-      >
-        <FontAwesomeIcon icon={faBars} size="2x" />
-      </div>
+      {!showIconNotify && (
+        <div
+          className="lg:hidden cursor-pointer"
+          onClick={() => setShowMenu(true)}
+        >
+          <FontAwesomeIcon icon={faBars} size="2x" />
+        </div>
+      )}
       {showMenu && <MenuHome activeMenu={() => setShowMenu(false)} />}
 
       {showIconNotify && <NotifationsCard />}
     </div>
   );
 };
-
-

@@ -28,6 +28,7 @@ body {
     color 0.3s ease,
     all 0.3s ease;
 }
+
 .color {
   color: var(--color);
 }
@@ -99,7 +100,9 @@ body::-webkit-scrollbar-thumb {
   gap: 15px;
   margin-bottom: 30px;
 }
-
+.dashboard-grid.md {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
 .stat-card {
   background: var(--foreground);
   padding: 20px;

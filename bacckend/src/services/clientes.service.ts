@@ -1,8 +1,9 @@
-import { prisma } from "../utils/prisma"
+import { prisma } from "../utils/prisma";
+import { getPublicURL } from "../utils/url";
 
 
 export const findAllClient = async () => {
-  return await prisma.user.findMany({
+  const users= await prisma.user.findMany({
     select: {
       id: true,
       nome: true,
@@ -21,6 +22,12 @@ export const findAllClient = async () => {
     },
     orderBy: { createdAt: 'desc' }
   })
+  for (const user in users) {
+    users[user].image = getPublicURL(users[user].image || undefined);
+  }
+
+
+  return users
 }
 
 export const findClientById = async (id: string) => {
@@ -44,6 +51,12 @@ export const findClientById = async (id: string) => {
     },
     orderBy: { createdAt: 'desc' }
   })
+
+
+  if (user?.image) {
+      user.image = getPublicURL(user.image || undefined);
+  }
+
 
   return user
 }

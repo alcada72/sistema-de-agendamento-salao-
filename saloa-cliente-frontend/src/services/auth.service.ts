@@ -53,7 +53,7 @@ export const UpdateImage = async (
     const response = await api.putForm(`/users/avatar`, formData, {
       headers: { "Content-Type": "multipart/form-data" },
     })
-    
+
     if (response.status !== 201) {
       return false
     }

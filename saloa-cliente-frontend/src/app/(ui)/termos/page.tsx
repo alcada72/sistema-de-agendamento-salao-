@@ -1,4 +1,3 @@
-import { NavLogout } from "@/components/nav/nav-logout";
 import { GeneralHeader } from "@/components/ui/general-header";
 import SwitchTheme from "@/components/ui/SwitchTheme";
 import Link from "next/link";
@@ -24,7 +23,6 @@ export default function Page() {
             </div>
           </div>
           <SwitchTheme hideLabel />
-          <NavLogout hiddenLabel />
         </div>
       </GeneralHeader>
 

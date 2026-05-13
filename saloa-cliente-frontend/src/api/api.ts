@@ -4,13 +4,15 @@ import baseURL from "./baseUrl"
 
 const api = axios.create({
   baseURL: baseURL,
+
 })
 
 api.interceptors.request.use((config) => {
   const token = getToken()
-
+  config.headers["Content-Type"] = "application/json"
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
+
   }
 
   return config

@@ -63,7 +63,7 @@ mainRouter.put('/appointments/status/:id', verifyJWT, agendaController.comfirmAp
 mainRouter.delete('/appointments/:id', verifyJWT, agendaController.deleteAppointmentById)
 
 //rotas de profissionais
-//mainRouter.post('/professionals', verifyJWT, authorizeRoles("ADMIN"), professionalController.createProfessional)
+mainRouter.get('/professionals/appointments/:id', verifyJWT, authorizeRoles("ADMIN","PROFESSIONAL"), professionalController.GetAllAgendaByProfissional)
 //mainRouter.get('/professionals/:id', professionalController.getProfessionalById)
 mainRouter.get('/professionals', professionalController.getAllProfessionals)
 //mainRouter.put('/professionals/:id', verifyJWT, authorizeRoles("ADMIN"), professionalController.updateProfessionalById)

@@ -6,7 +6,8 @@ export const getPublicURL = (url?: string) => {
     new URL(url);
     return url;
   } catch {
-    const cleanUrl = url.replace(/^\//, ""); return `${process.env.BASE_URL}/${cleanUrl}`;
+    const cleanUrl = url.replace(/^\//, "");
+    return `${process.env.BASE_URL}/${cleanUrl}`;
   }
 };
 

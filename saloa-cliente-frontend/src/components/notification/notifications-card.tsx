@@ -14,6 +14,7 @@ import Notificationitem from "./notification-item";
 export default function NotifationsCard() {
   const router = usePathname();
   const isAdmin = router.startsWith("/admin");
+  const isProficional = router.startsWith("/prof");
   const [showMenu, setShowMenu] = React.useState(false);
   const [notifications, setNotification] = React.useState<Notification[]>([]);
 

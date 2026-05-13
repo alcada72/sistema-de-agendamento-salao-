@@ -1,4 +1,4 @@
-import { SigninFormAdmin } from "@/components/admin/auth/signinFormAdmin";
+import { SigninFormProf } from "@/components/prof/auth/signinFormAdmin";
 import { Logo } from "@/components/ui/logo";
 import SwitchTheme from "@/components/ui/SwitchTheme";
 
@@ -14,7 +14,7 @@ export default function Page() {
       </h1>
       <span className="text-gray-400">Para gerenciar os pedidios</span>
       <div className=" mt-9 mb-14 flex flex-col gap-4">
-        <SigninFormAdmin />
+        <SigninFormProf />
       </div>
     </div>
   );

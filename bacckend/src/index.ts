@@ -42,5 +42,14 @@ const PORT = process.env.PORT || 8080;
 const BASE_URL = process.env.BASE_URL || `http://localhost:${PORT}`;
 
 httpServer.listen(PORT, () => {
-  console.log(`Servidor rodando em ${BASE_URL}  🚀🚀`);
+  console.log(` 
+  ╔════════════════════════════════════════╗
+  ║    JMC-cachiungo -  v1.0.0             ║
+  ║  JMC-CACHIUNGO agendamento de serviços ║
+  ╠════════════════════════════════════════╣
+  ║  🚀 Servidor rodando na porta ${PORT}  ║
+  ║  🌐 URL Base: ${BASE_URL}             ║  
+  ║  📦 Ambiente: ${process.env.NODE_ENV || 'development'}║
+  ╚════════════════════════════════════════╝
+  `);
 });

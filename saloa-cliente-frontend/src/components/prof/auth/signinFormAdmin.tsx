@@ -1,13 +1,13 @@
 "use client";
-
-import { SigninService } from "@/services/auth.service";
+import { AwaitingModal } from "@/components/ui/awaitingModal";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { SigninAdmin } from "@/services/admin/auth.service";
+import { SigninProf } from "@/services/prof/auth.service";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { AwaitingModal } from "../ui/awaitingModal";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
 
-export const SigninForm = () => {
+export const SigninFormProf = () => {
   const [emailField, setEmailField] = useState("");
   const [passwordField, setPasswordField] = useState("");
   const [isLoandig, setisLoandig] = useState(false);
@@ -17,15 +17,16 @@ export const SigninForm = () => {
 
   const handleSubmit = async () => {
     setisLoandig(true);
-    const result = await SigninService(emailField, passwordField);
+    const result = await SigninProf(emailField, passwordField);
 
     if (!result) {
-      return alert("E-mailou senha incorreta");
+      return setmessage("E-mail ou senha incorreta");
     }
-
-    alert("Usuario logado com sucesso");
-    setisLoandig(false);
-    return router.replace("/home");
+    {
+      setmessage("Usuario logado com sucesso");
+      setisLoandig(false);
+      return router.replace("/prof");
+    }
   };
 
   return (
@@ -48,7 +49,6 @@ export const SigninForm = () => {
         onClick={handleSubmit}
         uppercase
       />
-
       {isLoandig && (
         <AwaitingModal
           closeAction={() => setisLoandig(false)}
