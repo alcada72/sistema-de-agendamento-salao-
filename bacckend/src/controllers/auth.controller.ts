@@ -5,11 +5,8 @@ import { SigninSchemas } from "../schemas/signinSchemas";
 import { SignupAdminSchema } from "../schemas/signupSchemas";
 import { SignupUserAmin } from "../services/auth_admin.service";
 import { RegisterActividade } from "../services/notification.service";
-import { VerifyEmailSend } from "../services/sendVerification.service";
 import { findUserByTelefone, FindUserEmail } from "../services/user.service";
-import { generateVerificationCode } from "../utils/geradorOTP";
 import { createJWT } from "../utils/jwt";
-import { prisma } from "../utils/prisma";
 import { getPublicFormattedUrl } from "../utils/url";
 
 export const signupUserAdmin = async (req: Request, res: Response) => {
@@ -65,6 +62,7 @@ export const signupUserProfisional = async (req: Request, res: Response) => {
 
   const resumeImage = getPublicFormattedUrl(image.path as string)
   const verifyUser = await FindUserEmail(safedata.data.email)
+  
   if (verifyUser) {
     return res.status(403).json({ error: 'Acesso negado' })
   }
@@ -106,20 +104,22 @@ export const signupUserClient = async (req: Request, res: Response) => {
       error: safedata.error.flatten().fieldErrors
     })
   }
+  
   const verifyUser = await FindUserEmail(safedata.data.email)
-  const code = generateVerificationCode();
+
   if (verifyUser) {
     return res.status(403).json({ error: 'Acesso negado' })
   }
 
   const haspass = await hash(safedata.data.password as string, 10)
+
   const newClient = await SignupUserAmin({
     nome: safedata.data.nome,
     email: safedata.data.email,
     password: haspass,
     telefone: safedata.data.telefone || null,
     role: Role.CLIENT,
-    emaiverificationid: code as string,
+    emaiverificationid: '',
     expiracaoEmail: new Date(Date.now() + 10 * 60 * 1000),
   })
 
@@ -128,18 +128,17 @@ export const signupUserClient = async (req: Request, res: Response) => {
     return res.status(403).json({ error: 'Acesso negado' })
   }
 
+  // try {
+  //   if (newClient.email) await VerifyEmailSend(newClient.email);
+  // } catch (err) {
+  //   console.error("Erro ao enviar e-mail:", err);
 
-  try {
-    if (newClient.email) await VerifyEmailSend(newClient.email);
-  } catch (err) {
-    console.error("Erro ao enviar e-mail:", err);
+  //   await prisma.user.delete({ where: { id: newClient.id } });
 
-    await prisma.user.delete({ where: { id: newClient.id } });
-
-    return res.status(403).json({
-      error: "Erro ao enviar e-mail de verificação. Cadastro cancelado.",
-    });
-  }
+  //   return res.status(403).json({
+  //     error: "Erro ao enviar e-mail de verificação. Cadastro cancelado.",
+  //   });
+  // }
 
   const token = await createJWT(newClient.id, newClient.role)
 
