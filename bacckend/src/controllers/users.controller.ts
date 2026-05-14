@@ -5,7 +5,7 @@ import { getAllMarks } from "../services/bookMark.service";
 import { getUserNotifications, RegisterActividade, sendNotifications } from "../services/notification.service";
 import { DeleteUserById, FindAllUsers, FindUserById, updateAvatarUser, updatePasswordUser, UpdateUserById, UserCreateImagem } from "../services/user.service";
 import { extendedRequest } from "../types/extended-types";
-import { getPublicFormattedUrl } from "../utils/url";
+import { deleteImageFromCloudinary } from "../utils/cloudinary";
 
 export async function getMe(req: Request, res: Response) {
   const reqExtended = req as extendedRequest
@@ -150,10 +150,12 @@ export async function updateUserById(req: Request, res: Response) {
     return res.status(404).json({ error: "Usuário não encontrado" });
   }
   const updatedUser = await UpdateUserById(id as string, safedata.data);
+
   if (!updatedUser) {
     return res.status(403).json({ error: "Erro ao atualizar usuário" });
   }
-  await RegisterActividade(`o usuario ${user.nome} teve seu perfil atualizado`, user.id)
+
+  RegisterActividade(`o usuario ${user.nome} teve seu perfil atualizado`, user.id)
   return res.status(200).json({ user: updatedUser });
 }
 
@@ -167,11 +169,12 @@ export async function postImagem(req: Request, res: Response) {
   }
 
   const user = await FindUserById(id);
+  
   if (!user) {
     return res.status(404).json({ error: "Usuário inexistente" });
   }
 
-  const publicUrl = getPublicFormattedUrl(req.file.path);
+  const publicUrl = req.file.path;
 
 
   const imagem = await UserCreateImagem(publicUrl, id)
@@ -200,15 +203,26 @@ export async function upDateAvater(req: Request, res: Response) {
     return res.status(403).json({ error: "Usuário inexistente" });
   }
 
-  const publicUrl = getPublicFormattedUrl(req.file.path);
+  if (user.image) {
+    await deleteImageFromCloudinary(user.image)
+  }
+
+
+
+  const publicUrl = req.file.path;
 
   const avatar = await updateAvatarUser(id, { image: publicUrl })
 
   if (!avatar) {
     return res.status(403).json({ error: "Erro ao atualizar avatar" });
   }
+
+
+
+
+
   await RegisterActividade(`o usuario ${user.nome} atualizou seu avatar`, user.id)
-  res.status(201).json({ message: "Imagem de perfil atualizada com sucesso com sucesso", })
+  res.status(201).json({ message: "Imagem de perfil atualizada com sucesso com sucesso", avatar })
 }
 
 export async function getNotifcationsByUser(req: Request, res: Response) {

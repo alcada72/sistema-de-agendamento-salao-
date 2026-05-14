@@ -9,6 +9,7 @@ import * as servicesController from "../controllers/servicos.controller"
 import * as usersController from "../controllers/users.controller"
 import { authorizeRoles, verifyJWT } from "../utils/jwt"
 import { upload } from "../utils/uploadsLocal"
+import { perfil, tweets } from "../utils/uplouds"
 
 export const mainRouter = Router()
 
@@ -32,8 +33,8 @@ mainRouter.post('/auth/signin', authController.SigninUser)
 mainRouter.get('/users/me', verifyJWT, usersController.getMe)
 mainRouter.put('/users/me', verifyJWT, usersController.updateMe)
 mainRouter.delete('/users/me', verifyJWT, usersController.deleteMe)
-mainRouter.post('/users/image', verifyJWT, upload.single("image"), usersController.postImagem)
-mainRouter.put('/users/avatar', verifyJWT, upload.single("image"), usersController.upDateAvater)
+mainRouter.post('/users/image', verifyJWT, tweets.single("image"), usersController.postImagem)
+mainRouter.put('/users/avatar', verifyJWT, perfil.single("image"), usersController.upDateAvater)
 mainRouter.put('/users/password', verifyJWT, usersController.updateMyPassword)
 mainRouter.get('/users/:id', verifyJWT, usersController.getUserById)
 mainRouter.get('/users', verifyJWT, authorizeRoles("ADMIN"), usersController.getAllUsers)
@@ -43,7 +44,7 @@ mainRouter.get('/user/notify', verifyJWT, usersController.getNotifcationsByUser)
 mainRouter.get('/user/bookmarks', verifyJWT, usersController.getMarksByUser)
 
 //rotas de serviços
-mainRouter.post('/services', upload.array('image', 5), verifyJWT, authorizeRoles("ADMIN", "PROFESSIONAL"), servicesController.creatServicos)
+mainRouter.post('/services', tweets.array('image', 5), verifyJWT, authorizeRoles("ADMIN", "PROFESSIONAL"), servicesController.creatServicos)
 mainRouter.get('/services/:id', servicesController.getServiceById)
 mainRouter.get('/services', servicesController.getAllServices)
 mainRouter.put('/services/:id', verifyJWT, authorizeRoles("ADMIN", "PROFESSIONAL"), servicesController.updateServiceById)

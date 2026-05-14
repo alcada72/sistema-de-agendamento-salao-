@@ -1,6 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
-import { CloudinaryStorage } from "multer-storage-cloudinary";
 import dotenv from "dotenv";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
 
 dotenv.config();
 
@@ -15,15 +15,16 @@ export const tweetsImg = new CloudinaryStorage({
   params: async (req, file) => ({
     folder: "tweets",
     resource_type: "image",
-    public_id: Date.now().toString() + "-" + file.originalname.split(".")[0],
+    public_id: "JMC" + Date.now().toString() + "-" + file.originalname.split(".")[0],
   }),
 });
+
 export const perfilImg = new CloudinaryStorage({
   cloudinary,
   params: async (req, file) => ({
     folder: "perfil",
     resource_type: "image",
-    public_id: Date.now().toString() + "-" + file.originalname.split(".")[0],
+    public_id: "JMC" + Date.now().toString() + "-" + file.originalname.split(".")[0],
   }),
 });
 

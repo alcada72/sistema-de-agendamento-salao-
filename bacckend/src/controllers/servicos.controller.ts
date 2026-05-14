@@ -9,10 +9,14 @@ import { FindProfissionalById } from "../services/profissional.service";
 import { creatServicesService, deleteServiceByIdservice, findAllServices, findServiceById, getOtherServiceNotId, getServicesWithPagination, updateServiceByIdservice } from "../services/servicos.service";
 import { FindUserById } from "../services/user.service";
 import { extendedRequest } from "../types/extended-types";
-import { getPublicFormattedUrl } from "../utils/url";
 
 export async function creatServicos(req: Request, res: Response) {
   const reqExtended = req as extendedRequest
+  
+  if (!reqExtended.userId || reqExtended.role !== 'ADMIN') {
+    return res.status(403).json({ error: "Acesso negado" });
+  }
+
 
   const safedata = servicosSchema.safeParse(req.body)
   if (!safedata.success) {
@@ -40,7 +44,7 @@ export async function creatServicos(req: Request, res: Response) {
     }
   }
 
-  const imagem = images.map(image => getPublicFormattedUrl(image.path));
+  const imagem = images.map(image => image.path);
 
   const newServico = await creatServicesService({
     ...safedata.data,
@@ -54,6 +58,7 @@ export async function creatServicos(req: Request, res: Response) {
   if (!newServico) {
     return res.status(500).json({ error: "Erro ao criar serviço" });
   }
+
   await RegisterActividade(`o serviço ${newServico.nome} foi criado`, reqExtended.userId as string, newServico.id)
   return res.status(201).json({
     message: "Serviço criado com sucesso",
@@ -234,8 +239,6 @@ export const ToogleMarkService = async (req: Request, res: Response) => {
   await RegisterActividade(`uma marcação foi adicionada `, userId, service.id)
   return res.status(200).json({ message: "Serviço marcado", isMarked: true });
 }
-
-
 
 export const checkMark = async (req: Request, res: Response) => {
   const { id } = req.params;
