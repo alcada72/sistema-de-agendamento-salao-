@@ -20,7 +20,7 @@ export function CommentCard({ comment, index }: CommentCardProps) {
             <span className="font-bold text-sm truncate">
               {comment.user.nome}
             </span>
-            <span className="text-xs  flex-shrink-0">
+            <span className="text-xs  shrink-0">
               {formatRelativeTime(comment.createdAt)}
             </span>
           </div>

@@ -12,27 +12,35 @@ export const SignupForm = () => {
   const [telefoneField, setTelefoneField] = useState("");
   const [emailField, setEmailField] = useState("");
   const [passwordField, setPasswordField] = useState("");
-  const [isLoandig, setisLoandig] = useState(false);
-  const [message, setmessage] = useState("");
+  const [isLoading, setisLoading] = useState(false);
+  const [message, setmessage] = useState<string | null>("");
   const router = useRouter();
 
   const handleSubmit = async () => {
-    setisLoandig(true);
+    setisLoading(true);
+    setmessage(null);
+
+    if (!nomeField || !emailField || !telefoneField || !passwordField) {
+      setmessage("Preencha todos os campos");
+      setisLoading(false);
+      return;
+    }
+
     const result = await SignUpService(
       nomeField,
       emailField,
       telefoneField,
       passwordField,
     );
-    if (result) {
-      setmessage("Usuario criado com sucesso");
-      setisLoandig(false);
-      router.replace("/verification");
-    }
+
     if (!result) {
       setmessage("Erro ao criar usuario");
-      setisLoandig(false);
+      setisLoading(false);
+      return;
     }
+
+    setisLoading(false);
+    return router.replace("/");
   };
 
   return (
@@ -60,15 +68,15 @@ export const SignupForm = () => {
       />
       <Button
         label={"Criar Conta"}
-        disabled={isLoandig}
+        disabled={isLoading}
         size={1}
         uppercase
         onClick={handleSubmit}
       />
 
-      {isLoandig && (
+      {isLoading && (
         <AwaitingModal
-          closeAction={() => setisLoandig(false)}
+          closeAction={() => setisLoading(false)}
           mostraractions={!message ? false : true}
           message={!message ? "Processando..." : message}
         />

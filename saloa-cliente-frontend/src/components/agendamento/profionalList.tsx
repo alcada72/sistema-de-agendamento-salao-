@@ -13,18 +13,17 @@ export function ProfissionaList({ onSelect }: Props) {
   const [select, setSelect] = useState<string>();
   const [service, setservice] = useState<User[]>([]);
 
-  useEffect(() => {
-    const getService = async () => {
-      const p = await GetProfissionaisLimited();
-      if (!p) {
-        return;
-      }
-      setservice(p);
-    };
+  const getService = async () => {
+    const p = await GetProfissionaisLimited();
+    console.log("Professionals disponivel", p);
 
-    return () => {
-      getService();
-    };
+    if (p) {
+      return setservice(p);
+    }
+  };
+
+  useEffect(() => {
+    getService();
   }, []);
 
   if (!service) {
@@ -43,8 +42,8 @@ export function ProfissionaList({ onSelect }: Props) {
             key={p.id}
             className={`p-0 m-0 ${
               select === p.id && "border-2 border-blue-500"
-            } rounded-lg w-full relative
-      flex-1 min-w-[193px] md:min-w-[180px] max-w-1/2 md:max-w-1/3 overflow-hidden`}
+            } rounded-lg w-full relative flex-1 min-w-48.25
+              md:min-w-45 max-w-1/2 md:max-w-1/3 overflow-hidden`}
             onClick={() => {
               setSelect(p.id);
               onSelect(p.id);

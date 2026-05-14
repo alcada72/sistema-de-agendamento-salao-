@@ -17,6 +17,13 @@ export const SigninForm = () => {
 
   const handleSubmit = async () => {
     setisLoandig(true);
+    setmessage("");
+
+    if (!emailField || !passwordField) {
+      setmessage("Preencha todos os campos");
+      setisLoandig(false);
+      return;
+    }
     const result = await SigninService(emailField, passwordField);
 
     if (!result) {
@@ -27,7 +34,7 @@ export const SigninForm = () => {
 
     setmessage("Logado com sucesso");
     setisLoandig(false);
-    return router.replace("/home");
+    return router.replace("/");
   };
 
   return (
@@ -54,7 +61,7 @@ export const SigninForm = () => {
       {isLoandig && (
         <AwaitingModal
           closeAction={() => setisLoandig(false)}
-          mostraractions={!message ? false : true}
+          mostraractions={message ? true : false}
           message={!message ? "Processando..." : message}
         />
       )}

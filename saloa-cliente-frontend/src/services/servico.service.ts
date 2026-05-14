@@ -46,9 +46,6 @@ export const GetProfissionaisLimited = async (): Promise<User[] | undefined> => 
   try {
     const response = await api.get(
       `/professionals`,
-      {
-
-      }
     );
     return response.data.profissionais;
   } catch (error) {
