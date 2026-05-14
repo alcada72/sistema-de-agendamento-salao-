@@ -104,7 +104,7 @@ export const signupUserClient = async (req: Request, res: Response) => {
       error: safedata.error.flatten().fieldErrors
     })
   }
-  
+
   const verifyUser = await FindUserEmail(safedata.data.email)
 
   if (verifyUser) {
@@ -125,7 +125,7 @@ export const signupUserClient = async (req: Request, res: Response) => {
 
 
   if (!newClient) {
-    return res.status(403).json({ error: 'Acesso negado' })
+    return res.status(403).json({ error: 'Acesso' })
   }
 
   // try {
