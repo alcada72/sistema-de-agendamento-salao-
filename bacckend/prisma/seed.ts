@@ -5,35 +5,27 @@ const prisma = new PrismaClient();
 
 async function main() {
   const pass = await hash("123456", 10);
-  const admin = await prisma.user.upsert({
+  await prisma.user.upsert({
     where: { email: "admin@jmc.com" },
     update: {},
     create: {
       nome: "Admin",
       email: "admin@salon.com",
-      password: pass  as string,
+      password: pass,
       role: "ADMIN"
     }
   });
 
-  const prof = await prisma.user.upsert({
+  await prisma.user.upsert({
     where: { email: "ana@salon.com" },
     update: {},
     create: {
       nome: "Ana Profissional",
       email: "ana@salon.com",
-      password: pass  as string,
+      password: pass,
       role: "PROFESSIONAL"
     }
   });
-
-  await prisma.service.createMany({
-    data: [
-      { nome: "Corte Feminino", duration: 45, price: 100.0, professionalId: prof.id },
-      { nome: "Corte Masculino", duration: 60, price: 1000.00, professionalId: prof.id },
-      { nome: "Manicure", duration: 30, price: 700.0, professionalId: prof.id }
-    ]
-  }); 
 
   console.log("Seed finalizado");
 }

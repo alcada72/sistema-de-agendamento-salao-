@@ -1,5 +1,6 @@
 "use client";
 import { PostAgendamento } from "@/services/servico.service";
+import { service } from "@/types/servicos";
 import { useState, useTransition } from "react";
 import { ActiveProgressIndicator } from "../ui/spin";
 import { Calendar } from "./Calendar";
@@ -9,11 +10,11 @@ import { TimeSlotPicker } from "./TimeSlotPicker";
 
 export function AgendamentoModal({
   onClose,
-  serviceId,
-}: {
+  service,
+}: Readonly<{
   onClose: () => void;
-  serviceId: string;
-}) {
+  service: service;
+}>) {
   const [step, setStep] = useState(1);
   const [isPadinng, startTransition] = useTransition();
   const [date, setDate] = useState<Date | null>(null);
@@ -27,21 +28,21 @@ export function AgendamentoModal({
 
     const dataCompleta = new Date(
       date.getFullYear(),
-      date.getMonth(), // mês é 0-based
+      date.getMonth(), 
       date.getDate(),
       hours,
       minutes,
-      0
+      0,
     );
 
     const formatedDate = new Date(
-      `${dataCompleta.toISOString().split("T")[0]}T${time}:00.000Z`
+      `${dataCompleta.toISOString().split("T")[0]}T${time}:00.000Z`,
     ).toISOString();
 
     try {
       startTransition(async () => {
         await PostAgendamento({
-          serviceId,
+          serviceId: service.id,
           professionalId: profissional,
           date: new Date(formatedDate).toISOString(),
         });
@@ -53,10 +54,13 @@ export function AgendamentoModal({
     }
   };
 
+  console.log(service);
+  
+
   if (isPadinng) {
     return (
       <div
-        className="fixed inset-0 flex  bg-neutral-400/40 
+        className="fixed inset-0 flex flex-1 bg-neutral-400/40 
           backdrop-blur-[5px] items-center justify-center z-50 size-full"
       >
         <ActiveProgressIndicator />
@@ -94,6 +98,7 @@ export function AgendamentoModal({
         {step === 3 && date && (
           <ProfissionaList
             date={date}
+            category={service.categoria}
             onSelect={(p) => {
               setprofissional(p);
               setStep(4);
@@ -107,7 +112,7 @@ export function AgendamentoModal({
 
         <button
           onClick={onClose}
-          className="mt-4 text-sm text-red-800 text-center w-full"
+          className="mt-4 text-sm cursor-pointer text-red-800 text-center w-full"
         >
           Cancelar
         </button>

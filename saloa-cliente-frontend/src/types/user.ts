@@ -1,7 +1,11 @@
+import { Category } from "./servicos";
+
+
 export type User = {
   id: string,
   nome: string,
   telefone: string,
+  categoria: Category,
   email: string,
   role: string,
   image: string,

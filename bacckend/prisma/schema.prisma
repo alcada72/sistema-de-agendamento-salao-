@@ -14,6 +14,7 @@ model User {
   email                  String        @unique
   password               String
   role                   Role          @default(CLIENT)
+  categoria              Category?
   image                  String        @default("/default.png")
   telefone               String?
   createdAt              DateTime      @default(now())
@@ -24,25 +25,26 @@ model User {
   emailverificadIn   DateTime?
   expiracaoEmail     DateTime?
   emaiverificationid String?   @unique @default(cuid())
-  isVerified    Boolean   @default(false)
+  isVerified         Boolean   @default(false)
 
   images    Images[]
   bookMarks BookMark[]
 
-  receivedNotifications Notification[] @relation("UserNotifications") // Recebeu notificações
-  sentNotifications     Notification[] @relation("NotificationSender") // Enviou notificações
+  receivedNotifications Notification[] @relation("UserNotifications")
+  sentNotifications     Notification[] @relation("NotificationSender")
   comments              Comments[]
 }
 
 model Service {
-  id             String   @id @default(cuid())
+  id             String    @id @default(cuid())
   nome           String
   description    String?
   duration       Int
   price          Float
   professionalId String?
-  professional   User?    @relation("ProfessionalServices", fields: [professionalId], references: [id])
-  createdAt      DateTime @default(now())
+  professional   User?     @relation("ProfessionalServices", fields: [professionalId], references: [id])
+  createdAt      DateTime  @default(now())
+  categoria      Category? @default(BARBEARIA)
 
   bookings      Agendamento[]
   images        Images[]
@@ -104,8 +106,8 @@ model BookMark {
 
 model Notification {
   id        String  @id @default(uuid())
-  recevidId String // Quem recebe
-  senderId  String? // Quem gerou
+  recevidId String
+  senderId  String?
   serviceId String?
   message   String
 
@@ -133,4 +135,10 @@ enum AgendamentoStatus {
   CONFIRMED
   CANCELLED
   COMPLETED
+}
+
+enum Category {
+  BARBEARIA
+  MANICURE
+  CYBER
 }

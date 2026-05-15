@@ -2,12 +2,11 @@ import { User } from "@/types/user";
 
 interface Props {
   user: User;
-
 }
-export default function CardFuncionario({ user }: Props)  {
+export default function CardFuncionario({ user }: Readonly<Props>) {
   const cover = user?.image;
   return (
-    <div className="flex justify-center min-w-50 gap-1 items-center">
+    <div className="flex justify- min-w-50 gap-1 items-start">
       <div className="rounded-full overflow-hidden size-10 min-w-10">
         <img
           src={cover}
@@ -17,11 +16,13 @@ export default function CardFuncionario({ user }: Props)  {
           className="object-cover size-full bg-neutral-400/30"
         />
       </div>
-      <div className="flex-1 w-full flex flex-col overflow-hidden">
+      <div className="flex-1 w-full text-start flex items-start  flex-col overflow-hidden">
         <span className="text-sm truncate block font-bold max-w-10s/11">
           {user?.nome}
         </span>
-        <span className="text-sm truncate block max-w-11/12"> {user?.email} </span>
+        <span className="text-sm truncate block max-w-11/12">
+          {user?.email}
+        </span>
       </div>
     </div>
   );

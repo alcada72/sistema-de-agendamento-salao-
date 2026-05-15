@@ -1,10 +1,12 @@
 import { images, User } from "./user"
+export type Category = "BARBEARIA" | "MANICURE" | "CYBER"
 
 export type service = {
   id: string,
   nome: string,
   description: string,
   duration: number,
+  categoria: Category,
   price: number,
   professionalId: number,
   createdAt: Date,

@@ -1,3 +1,4 @@
+import { Category } from "@prisma/client";
 import { Request, Response } from "express";
 import { commentSchema } from "../schemas/comment";
 import { paginationSchemas } from "../schemas/parpage";
@@ -5,14 +6,14 @@ import { servicosSchema } from "../schemas/servicosSchemas";
 import { FindMark, mark, unMark } from "../services/bookMark.service";
 import { createComments } from "../services/comments.service";
 import { RegisterActividade } from "../services/notification.service";
-import { FindProfissionalById } from "../services/profissional.service";
+import { FindProfessionalsById } from "../services/profissional.service";
 import { creatServicesService, deleteServiceByIdservice, findAllServices, findServiceById, getOtherServiceNotId, getServicesWithPagination, updateServiceByIdservice } from "../services/servicos.service";
 import { FindUserById } from "../services/user.service";
 import { extendedRequest } from "../types/extended-types";
 
 export async function creatServicos(req: Request, res: Response) {
   const reqExtended = req as extendedRequest
-  
+
   if (!reqExtended.userId || reqExtended.role !== 'ADMIN') {
     return res.status(403).json({ error: "Acesso negado" });
   }
@@ -37,7 +38,7 @@ export async function creatServicos(req: Request, res: Response) {
   }
 
   if (safedata.data.professionalId) {
-    const profissional = await FindProfissionalById(safedata.data.professionalId);
+    const profissional = await FindProfessionalsById(safedata.data.professionalId);
 
     if (!profissional) {
       return res.status(404).json({ error: "Profissional não encontrado" });
@@ -48,8 +49,9 @@ export async function creatServicos(req: Request, res: Response) {
 
   const newServico = await creatServicesService({
     ...safedata.data,
-    duration: parseInt(safedata.data.duration),
-    price: parseInt(safedata.data.price),
+    duration: Number.parseInt(safedata.data.duration),
+    price: Number.parseInt(safedata.data.price),
+    categoria: safedata.data.categoria as Category || null,
     images: {
       create: imagem.map(url => ({ url })),
     }
@@ -59,7 +61,7 @@ export async function creatServicos(req: Request, res: Response) {
     return res.status(500).json({ error: "Erro ao criar serviço" });
   }
 
-  await RegisterActividade(`o serviço ${newServico.nome} foi criado`, reqExtended.userId as string, newServico.id)
+  await RegisterActividade(`o serviço ${newServico.nome} foi criado`, reqExtended.userId, newServico.id)
   return res.status(201).json({
     message: "Serviço criado com sucesso",
     servico: newServico
@@ -139,6 +141,7 @@ export async function updateServiceById(req: Request, res: Response) {
   }
   const updatedService = await updateServiceByIdservice(id as string, {
     ...safedata.data,
+    categoria: safedata.data.categoria as Category || null,
     duration: parseInt(safedata.data?.duration ? safedata.data?.duration : service.duration.toLocaleString()),
     price: parseInt(safedata.data?.price ? safedata.data?.price : service.price.toLocaleString()),
   });
@@ -182,7 +185,7 @@ export async function getOtherServicesById(req: Request, res: Response) {
     return res.status(403).json({ error: "ID do serviço é obrigatório" });
   }
 
-  const service = await findServiceById(id as string);
+  const service = await findServiceById(id);
   if (!service) {
     return res.status(403).json({ error: "Serviço não encontrado" });
   }
@@ -190,7 +193,7 @@ export async function getOtherServicesById(req: Request, res: Response) {
   let perPage = safeData.data.perPage ?? 10;
   let currentPage = safeData.data.page ?? 0;
 
-  const services = await getOtherServiceNotId(id as string, currentPage, perPage)
+  const services = await getOtherServiceNotId(service.id, service.categoria as Category, currentPage, perPage)
 
 
   return res.status(200).json({ services });

@@ -5,5 +5,6 @@ export const servicosSchema = z.object({
   description: z.string({ message: 'Descrição do serviço obrigatorio' }).min(10, 'Minimo 10 caractares'),
   duration: z.string({ message: 'Duração obrigatoria' }),
   price: z.string({ message: 'Preço obrigatorio' }),
+  categoria: z.string().optional(),
   professionalId: z.string({ message: 'Profissional obrigatorio' }).optional(),
 })

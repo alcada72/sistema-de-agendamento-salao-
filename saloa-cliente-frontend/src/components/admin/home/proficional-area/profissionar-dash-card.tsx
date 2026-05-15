@@ -6,10 +6,10 @@ export default async function Profissionardashcard() {
   const funcions = await GetProfissionaisLimitedServer();
   return (
     <div className="content-card">
-      <div className="w-full mb-5 items-center justify-between flex border-neutral-300 border-b-1 backdrop-blur-2xl p-1">
+      <div className="w-full mb-5 items-center justify-between flex border-neutral-300 border-b backdrop-blur-2xl p-1">
         <span className="text-2xl font-semibold ">Funcionarios</span>
         <Link
-          href={"admin/funcionarios"}
+          href={"/admin/home/funcionarios"}
           title="ver todos os agendametos"
           className="text-blue-500 hover:underline"
         >

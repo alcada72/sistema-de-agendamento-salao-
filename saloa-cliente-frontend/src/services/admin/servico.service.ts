@@ -1,6 +1,6 @@
 import apiAdmin from "@/api/api-admin";
 import { agendado } from "@/types/agendamento";
-import { agenda, service } from "@/types/servicos";
+import { agenda, Category, service } from "@/types/servicos";
 import { User } from "@/types/user";
 import { getID } from "@/utils/auth";
 import { redirect } from "next/navigation";
@@ -58,9 +58,24 @@ export const GetProfissionaisLimited = async (): Promise<User[] | undefined> => 
 
 };
 
+export const GetProfessionalsCategoria = async (category: Category): Promise<User[] | undefined> => {
+
+  try {
+    const response = await apiAdmin.get(
+      `/professionals/${category}`,
+    );
+    return response.data
+  } catch (error) {
+    console.log(error)
+    return redirect('/')
+  }
+
+};
+
+
 export const GetAllAgendaentosByUser = async (): Promise<agenda[] | undefined> => {
   try {
-    const id = await getID()
+    const id = getID()
     const response = await apiAdmin.get(`/clients/appointments/${id}`, {})
     return response.data.agenda
   } catch (error) {

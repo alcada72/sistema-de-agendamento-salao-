@@ -4,7 +4,8 @@ import apiAdmin from "@/api/api-admin";
 import { Button } from "@/components/ui/button";
 import CardFuncionario from "@/components/ui/card_funcionarios";
 import { Input } from "@/components/ui/input";
-import { GetProfissionaisLimited } from "@/services/admin/servico.service";
+import { GetProfessionalsCategoria } from "@/services/admin/servico.service";
+import { Category } from "@/types/servicos";
 import { User } from "@/types/user";
 import { faImage } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,16 +16,21 @@ type Props = {
   roalond: () => void;
 };
 
-export default function ModalCreateServices({ show, mostar, roalond }: Props) {
+export default function ModalCreateServices({
+  show,
+  mostar,
+  roalond,
+}: Readonly<Props>) {
   const [preview, setPreview] = useState<string[] | null>(null);
   const [image, setImage] = useState<File[] | null>(null);
   const [Proficional, setProficional] = useState<User[] | undefined>([]);
 
   const [nome, setNome] = useState<string>("");
-  const [professionalId, setProfissionalId] = useState<string>("");
+  const [professionalId, setProfessionalId] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [duration, setDuration] = useState<string>("");
   const [price, setPrice] = useState<string>("");
+  const [categoria, setCategoria] = useState("");
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files;
@@ -49,7 +55,8 @@ export default function ModalCreateServices({ show, mostar, roalond }: Props) {
       !description.trim() ||
       !price.trim() ||
       !professionalId.trim() ||
-      !image
+      !image ||
+      !categoria
     )
       return alert("Prencha todos os campos");
 
@@ -59,9 +66,10 @@ export default function ModalCreateServices({ show, mostar, roalond }: Props) {
     formData.append("price", price);
     formData.append("professionalId", professionalId);
     formData.append("duration", duration);
+    formData.append("categoria", categoria);
 
-    for (let i = 0; i < image.length; i++) {
-      formData.append("image", image[i]);
+    for (const element of image) {
+      formData.append("image", element);
     }
 
     const result = await apiAdmin.postForm("/services", formData, {});
@@ -76,26 +84,26 @@ export default function ModalCreateServices({ show, mostar, roalond }: Props) {
     setDescription("");
     setNome("");
     setPrice("");
-    setProfissionalId("");
+    setProfessionalId("");
     setDuration("");
     show();
   };
 
   const get = async () => {
     try {
-      const [profi] = await Promise.all([await GetProfissionaisLimited()]);
-      setProficional(profi);
+      const profisionais = await GetProfessionalsCategoria(categoria as Category);
+      setProficional(profisionais);
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    get;
+    get();
     return () => {
       get();
     };
-  }, []);
+  }, [categoria]);
 
   return (
     <div
@@ -250,6 +258,21 @@ export default function ModalCreateServices({ show, mostar, roalond }: Props) {
                 </div>
               </span>
             </div>
+            <div className="border mb-2 border-gray-600 rounded-2xl w-full max-w-9/12">
+              <select
+                defaultValue={""}
+                onChange={(e) => setCategoria(e.target.value)}
+                className=" border-0 outline-0 borda w-full flex items-center
+                      h-5 font-semibold rounded-2xl text-lg  transition-colors"
+              >
+                <option value="" disabled>
+                  Selecione uma categoria
+                </option>
+                <option value="BARBEARIA">BARBEARIA</option>
+                <option value="MANICURE">MANICURE</option>
+              </select>
+            </div>
+
             <div
               className="flex w-full max-w-9/12 items-center
                   gap-3 overflow-y-hidden overflow-x-scroll px-4 hide-scroobar noScroll"
@@ -257,17 +280,17 @@ export default function ModalCreateServices({ show, mostar, roalond }: Props) {
               {Proficional &&
                 Proficional.length > 0 &&
                 Proficional.map((p) => (
-                  <div
+                  <button
                     key={p.id}
-                    onClick={() => setProfissionalId(p.id)}
+                    onClick={() => setProfessionalId(p.id)}
                     className={`p-1 my-1 ${
                       professionalId === p.id &&
-                      "border-1 border-blue-500 scale-100"
+                      "border border-blue-500 scale-100"
                     } rounded-lg w-full bg-blue-500/10 transition-all
-      flex-1 min-w-[193px] md:min-w-[180px] max-w-1/2 overflow-hidden`}
+                    flex-1 min-w-48.25 md:min-w-45 max-w-1/2 overflow-hidden`}
                   >
                     <CardFuncionario user={p} />
-                  </div>
+                  </button>
                 ))}
             </div>
 
@@ -279,12 +302,12 @@ export default function ModalCreateServices({ show, mostar, roalond }: Props) {
                 onClick={handleCreateService}
                 uppercase
               />
-              <p
+              <button
                 className="text-lg mt-2.5 opacity-80 hover:opacity-100 text-red-700 text-center w-full flex-1 cursor-pointer"
                 onClick={HandleCancel}
               >
                 cancelar
-              </p>
+              </button>
             </div>
           </form>
         </div>

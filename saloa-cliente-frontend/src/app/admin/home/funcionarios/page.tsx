@@ -26,7 +26,7 @@ export default function page() {
   const [nome, setNome] = useState<string>("");
   const [telefone, setTelefone] = useState<string>("");
   const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("123456");
+  const [categoria, setCategoria] = useState<string>("");
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -53,32 +53,41 @@ export default function page() {
     setEmail("");
     setNome("");
     setImage(null);
-    setPassword("");
+    setCategoria("");
     setTelefone("");
     setopenModal(false);
   }
 
   async function CreatProfissional() {
-    if (!nome.trim() || !telefone.trim() || !email.trim() || !image)
+    if (
+      !nome.trim() ||
+      !telefone.trim() ||
+      !email.trim() ||
+      !image ||
+      !categoria
+    )
       return alert("Prencha todos os campos");
+
+    if (telefone.length < 9) {
+      return alert("O telefone tem que ter 9 caracteres minimos");
+    }
 
     const formData = new FormData();
     formData.append("nome", nome);
     formData.append("telefone", telefone);
     formData.append("email", email);
-    formData.append("password", password);
-
+    formData.append("password", "123456");
+    formData.append("categoria", categoria);
     formData.append("image", image);
 
     try {
       setisloandig(true);
       const result = await CreateFuncionario(formData);
-      
+
       if (result) {
         Getprofissionais();
         onClose();
       }
-
     } catch (error) {
       console.log(error);
     } finally {
@@ -128,6 +137,7 @@ export default function page() {
           ))}
         </div>
       </div>
+
       {openModal && (
         <ModalScreens onClose={onClose}>
           <div className="grid grid-cols-2 place-items-center size-full p-2">
@@ -164,7 +174,7 @@ export default function page() {
                   </label>
                   <div className="border border-gray-600 rounded-2xl text-white">
                     <Input
-                      placeholder="nome do funcionário Ex.: Aspirante Adelino"
+                      placeholder="Ex.: Aspirante Adelino"
                       filled
                       value={nome}
                       onChange={(texto) => setNome(texto)}
@@ -178,7 +188,7 @@ export default function page() {
                   </label>
                   <div className="border border-gray-600 rounded-2xl">
                     <Input
-                      placeholder="Nº de telefone Ex.: 945724107"
+                      placeholder="Ex.: 945724107"
                       filled
                       value={telefone}
                       onChange={(texto) => setTelefone(texto)}
@@ -192,7 +202,7 @@ export default function page() {
                   </label>
                   <div className="border border-gray-600 rounded-2xl">
                     <Input
-                      placeholder="E-mail do funcionário Ex.: exemplo@gmail.com"
+                      placeholder="Ex.: exemplo@gmail.com"
                       filled
                       value={email}
                       onChange={(texto) => setEmail(texto)}
@@ -202,16 +212,22 @@ export default function page() {
 
                 <span className="flex flex-col w-9/12">
                   <label className="text-lg ml-2 opacity-60 flex">
-                    Password do funcionário{" "}
-                    <p className="text-gray-500 text-sm">(Opcional)</p>
+                    Password do funcionário
                   </label>
                   <div className="border border-gray-600 rounded-2xl">
-                    <Input
-                      placeholder="Preço ex.: 1500"
-                      filled
-                      value={password}
-                      onChange={(texto) => setPassword(texto)}
-                    />
+                    <select
+                      defaultValue={""}
+                      onChange={(e) => setCategoria(e.target.value)}
+                      className=" border-0 outline-0 borda w-full flex items-center
+                      h-10 font-semibold rounded-2xl text-lg  transition-colors"
+                    >
+                      <option value="" disabled>
+                        Selecione uma categoria
+                      </option>
+                      <option value="BARBEARIA">Barbeiro</option>
+                      <option value="MANICURE">Manicure</option>
+                      <option value="CYBER">Cyber café</option>
+                    </select>
                   </div>
                 </span>
 
@@ -224,12 +240,12 @@ export default function page() {
                     uppercase
                     disabled={isloandig}
                   />
-                  <p
+                  <button
                     className="text-lg mt-2.5 opacity-80 hover:opacity-100 text-red-700 text-center w-full flex-1 cursor-pointer"
                     onClick={onClose}
                   >
                     cancelar
-                  </p>
+                  </button>
                 </div>
               </form>
             </div>

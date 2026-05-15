@@ -10,31 +10,38 @@ import { Input } from "../ui/input";
 export const SigninForm = () => {
   const [emailField, setEmailField] = useState("");
   const [passwordField, setPasswordField] = useState("");
-  const [isLoandig, setisLoandig] = useState(false);
-  const [message, setmessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   const router = useRouter();
 
   const handleSubmit = async () => {
-    setisLoandig(true);
-    setmessage("");
+    setIsLoading(true);
+    setMessage("");
 
     if (!emailField || !passwordField) {
-      setmessage("Preencha todos os campos");
-      setisLoandig(false);
+      setMessage("Preencha todos os campos");
+      setIsLoading(false);
       return;
     }
     const result = await SigninService(emailField, passwordField);
 
     if (!result) {
-      setmessage("E-mail ou senha incorreta");
-      setisLoandig(false);
+      setMessage("E-mail ou senha incorreta");
+      setIsLoading(false);
       return alert("E-mail ou senha incorreta");
     }
 
-    setmessage("Logado com sucesso");
-    setisLoandig(false);
-    return router.replace("/");
+    setMessage("Logado com sucesso");
+    setIsLoading(false);
+
+    if (result.role === "ADMIN") {
+      return router.replace("/admin");
+    } else if (result.role === "PROFESSIONAL") {
+      return router.replace("/prof");
+    } else {
+      return router.replace("/");
+    }
   };
 
   return (
@@ -52,17 +59,17 @@ export const SigninForm = () => {
       />
       <Button
         label={"Entrar"}
-        disabled={isLoandig}
+        disabled={isLoading}
         size={1}
         onClick={handleSubmit}
         uppercase
       />
 
-      {isLoandig && (
+      {isLoading && (
         <AwaitingModal
-          closeAction={() => setisLoandig(false)}
-          mostraractions={message ? true : false}
-          message={!message ? "Processando..." : message}
+          closeAction={() => setIsLoading(false)}
+          mostraractions={!!message}
+          message={message || "Processando..."}
         />
       )}
     </div>

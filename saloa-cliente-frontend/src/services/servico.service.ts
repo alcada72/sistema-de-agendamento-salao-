@@ -1,6 +1,6 @@
 import api from "@/api/api";
 import { agendado } from "@/types/agendamento";
-import { agenda, service } from "@/types/servicos";
+import { agenda, Category, service } from "@/types/servicos";
 import { User } from "@/types/user";
 import { getID } from "@/utils/auth";
 import { redirect } from "next/navigation";
@@ -55,6 +55,20 @@ export const GetProfissionaisLimited = async (): Promise<User[] | undefined> => 
 
 };
 
+export const GetProfessionalsCategoria = async (category: Category): Promise<User[] | undefined> => {
+
+  try {
+    const response = await api.get(
+      `/professionals/${category}`,
+    );
+    return response.data
+  } catch (error) {
+    console.log(error)
+    return redirect('/')
+  }
+
+};
+
 export const GetAllAgendaentosByUser = async (): Promise<agenda[] | undefined> => {
   try {
     const id = await getID()
@@ -78,6 +92,7 @@ export const DeleteAgendamentoById = async (id: string): Promise<boolean | undef
     console.log(error)
   }
 }
+
 export const CancelAgendamentoById = async (id: string, status: "CONFIRMED" | "PENDING" | "CANCELLED"): Promise<boolean | undefined> => {
   try {
     const res = await api.put(`/appointments/status/${id}`, {

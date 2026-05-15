@@ -133,7 +133,7 @@ export async function deleteUserById(req: Request, res: Response) {
   if (!deletedUser) {
     return res.status(403).json({ error: "Erro ao deletar usuário" });
   }
-  await RegisterActividade(`o usuario ${user.nome} teve sua conta deletada`, user.id)
+  RegisterActividade(`o usuario ${user.nome} teve sua conta deletada`, user.id)
   return res.status(200).json({ message: 'Usuário deletado com sucesso', user: deletedUser });
 }
 

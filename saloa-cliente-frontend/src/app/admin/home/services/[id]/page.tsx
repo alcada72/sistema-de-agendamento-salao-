@@ -21,7 +21,7 @@ import { use, useEffect, useState } from "react";
 type Props = {
   params: Promise<{ id: string }>;
 };
-export default function Page({ params }: Props) {
+export default function Page({ params }: Readonly<Props>) {
   const { id } = use(params);
 
   const Router = useRouter();
@@ -73,7 +73,7 @@ export default function Page({ params }: Props) {
     }
   };
 
-  const thumbnail = service.images && service.images[cover].url;
+  const thumbnail = service.images?.[cover].url;
 
   return (
     <>
@@ -113,7 +113,7 @@ export default function Page({ params }: Props) {
               {service?.nome}
             </span>
             <nav>
-              <span
+              <button
                 className="rounded-full size-6 bg p-1 mr-2 bg cursor-pointer"
                 onClick={() => setAdore(!adore)}
               >
@@ -121,7 +121,7 @@ export default function Page({ params }: Props) {
                   icon={faStar}
                   className={`size-6  ${adore && "text-yellow-500"}`}
                 />
-              </span>
+              </button>
               <span className="rounded-full size-6 bg p-1">
                 <FontAwesomeIcon icon={faShare} className={"size-6"} />
               </span>
@@ -131,34 +131,33 @@ export default function Page({ params }: Props) {
           <section
             className={` ${
               service.images.length == 1 ? "hidden" : "flex "
-            } absolute bottom-[1px]  left-0 w-full
+            } absolute bottom-px  left-0 w-full
            items-center justify-center z-20`}
           >
             <div
               className="flex flex-row gap-2.5  bg-neutral-400/30 
           backdrop-blur-[1px] p-2 items-center justify-center rounded-2xl"
             >
-              {service.images &&
-                service.images.map((m, i) => (
-                  <div
-                    key={i}
-                    onClick={() => setcover(i)}
-                    className={` ${
-                      cover === i && "border-2 border-blue-900 scale-110"
-                    }    flex-1 overflow-hidden rounded-sm size-12 max-w-12
+              {service.images?.map((m, i) => (
+                <button
+                  key={m.id}
+                  onClick={() => setcover(i)}
+                  className={` ${
+                    cover === i && "border-2 border-blue-900 scale-110"
+                  }    flex-1 overflow-hidden rounded-sm size-12 max-w-12
                          flex items-center justify-center
                          border-2  transition-all`}
-                  >
-                    <img
-                      src={m.url}
-                      alt={service.description}
-                      draggable={false}
-                      loading="lazy"
-                      crossOrigin="anonymous"
-                      className="size-full object-cover transition-all"
-                    />
-                  </div>
-                ))}
+                >
+                  <img
+                    src={m.url}
+                    alt={service.description}
+                    draggable={false}
+                    loading="lazy"
+                    crossOrigin="anonymous"
+                    className="size-full object-cover transition-all"
+                  />
+                </button>
+              ))}
             </div>
           </section>
 
@@ -213,13 +212,13 @@ export default function Page({ params }: Props) {
               <span className="flex-1 flex flex-col truncate text-sm max-w-full justify-center">
                 <span className="text-[15px] text-gray-500">Preço</span>
                 <span className="text-amber-300 text-lg">
-                  {FormatPrice(service?.price as number)}
+                  {FormatPrice(service?.price)}
                 </span>
               </span>
               <span className="truncate text-sm flex flex-col justify-center">
                 <span className="text-[15px] text-gray-500">Duração</span>
                 <span className="text-lg">
-                  {formatDuration(service.duration as number)}
+                  {formatDuration(service.duration)}
                 </span>
               </span>
             </div>
@@ -235,9 +234,7 @@ export default function Page({ params }: Props) {
               max-w-screen  overflow-hidden flex items-center justify-start py-2 px-1
                shrink-0 scroll-smooth"
               >
-                <CardFuncionario
-                  user={service.professional}
-                />
+                <CardFuncionario user={service.professional} />
               </section>
             </div>
             <div className="mt-10 mb-5">
@@ -252,7 +249,7 @@ export default function Page({ params }: Props) {
         <section className="p-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold">Serviços Disponiveis</h2>
 
-          <p onClick={() => Router.back()}>Ver mais</p>
+          <button onClick={() => Router.back()}>Ver mais</button>
         </section>
       </div>
       <div className="shrink-0 grid grid-cols-2 md:grid-cols-4 gap-2 flex-1 p-2">
@@ -264,7 +261,7 @@ export default function Page({ params }: Props) {
           onClose={function (): void {
             setshowmodal(false);
           }}
-          serviceId={service.id}
+          service={service}
         />
       )}
     </>

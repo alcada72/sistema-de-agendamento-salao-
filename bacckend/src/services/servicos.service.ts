@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Category, Prisma } from "@prisma/client";
 import { prisma } from "../utils/prisma";
 import { getPublicURL } from "../utils/url";
 
@@ -78,6 +78,7 @@ export const findServiceById = async (id: string) => {
       price: true,
       professionalId: true,
       createdAt: true,
+      categoria: true,
       images: {
         select: {
           id: true,
@@ -96,13 +97,13 @@ export const findServiceById = async (id: string) => {
         }
       },
       comments: {
-        orderBy:{createdAt:'desc'},
+        orderBy: { createdAt: 'desc' },
         select: {
           id: true,
           serviceId: true,
           commentText: true,
           createdAt: true,
-          
+
           user: {
             select: {
               id: true,
@@ -301,7 +302,9 @@ export const GetServiceWithProfessional = async (serviceId: string) => {
   return service
 }
 
-export const getOtherServiceNotId = async (id: string,
+export const getOtherServiceNotId = async (
+  id: string,
+  categoria: Category,
   curretPage: number,
   perPage: number) => {
 
@@ -314,6 +317,7 @@ export const getOtherServiceNotId = async (id: string,
       price: true,
       professionalId: true,
       createdAt: true,
+      categoria: true,
       images: {
         select: {
           id: true,
@@ -345,7 +349,7 @@ export const getOtherServiceNotId = async (id: string,
         }
       }
     },
-    where: { NOT: { id } },
+    where: { NOT: { id }, categoria: categoria },
     orderBy: { createdAt: 'desc' },
     skip: curretPage * perPage,
     take: perPage,
@@ -357,13 +361,13 @@ export const getOtherServiceNotId = async (id: string,
   for (const element of aliatorio) {
     if (element.comments) {
       for (const comment of element.comments) {
-        if (comment.user && comment.user.image) {
+        if (comment.user?.image) {
           comment.user.image = getPublicURL(comment.user.image)
         }
       }
     }
 
-    if (element.professional && element.professional.image) {
+    if (element.professional?.image) {
       element.professional.image = getPublicURL(element.professional.image)
     }
 

@@ -8,7 +8,6 @@ import * as professionalController from "../controllers/profissional.controller"
 import * as servicesController from "../controllers/servicos.controller"
 import * as usersController from "../controllers/users.controller"
 import { authorizeRoles, verifyJWT } from "../utils/jwt"
-import { upload } from "../utils/uploadsLocal"
 import { perfil, tweets } from "../utils/uplouds"
 
 export const mainRouter = Router()
@@ -25,7 +24,11 @@ mainRouter.post(
 
 //rotas de autenticação
 mainRouter.post('/auth/signup/admin', authController.signupUserAdmin)
-mainRouter.post('/auth/signup/prof', verifyJWT, upload.single("image"), authorizeRoles("ADMIN"), authController.signupUserProfisional)
+mainRouter.post('/auth/signup/prof',
+  verifyJWT,
+  tweets.single("image"),
+  authorizeRoles("ADMIN"),
+  authController.signupUserProfisional)
 mainRouter.post('/auth/signup/client', authController.signupUserClient)
 mainRouter.post('/auth/signin', authController.SigninUser)
 
@@ -64,9 +67,10 @@ mainRouter.put('/appointments/status/:id', verifyJWT, agendaController.comfirmAp
 mainRouter.delete('/appointments/:id', verifyJWT, agendaController.deleteAppointmentById)
 
 //rotas de profissionais
-mainRouter.get('/professionals/appointments/:id', verifyJWT, authorizeRoles("ADMIN","PROFESSIONAL"), professionalController.GetAllAgendaByProfissional)
+mainRouter.get('/professionals/appointments/:id', verifyJWT, authorizeRoles("ADMIN", "PROFESSIONAL"), professionalController.GetAllAgendaByProfissional)
 //mainRouter.get('/professionals/:id', professionalController.getProfessionalById)
 mainRouter.get('/professionals', professionalController.getAllProfessionals)
+mainRouter.get('/professionals/:category', professionalController.getAllProfessionalsWhareCategory)
 //mainRouter.put('/professionals/:id', verifyJWT, authorizeRoles("ADMIN"), professionalController.updateProfessionalById)
 //mainRouter.delete('/professionals/:id', verifyJWT, authorizeRoles("ADMIN"), professionalController.deleteProfessionalById)
 

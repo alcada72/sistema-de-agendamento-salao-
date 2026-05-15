@@ -12,17 +12,17 @@ export const SignupForm = () => {
   const [telefoneField, setTelefoneField] = useState("");
   const [emailField, setEmailField] = useState("");
   const [passwordField, setPasswordField] = useState("");
-  const [isLoading, setisLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [message, setmessage] = useState<string | null>("");
   const router = useRouter();
 
   const handleSubmit = async () => {
-    setisLoading(true);
+    setIsLoading(true);
     setmessage(null);
 
     if (!nomeField || !emailField || !telefoneField || !passwordField) {
       setmessage("Preencha todos os campos");
-      setisLoading(false);
+      setIsLoading(false);
       return;
     }
 
@@ -35,11 +35,11 @@ export const SignupForm = () => {
 
     if (!result) {
       setmessage("Erro ao criar usuario");
-      setisLoading(false);
+      setIsLoading(false);
       return;
     }
 
-    setisLoading(false);
+    setIsLoading(false);
     return router.replace("/");
   };
 
@@ -76,9 +76,9 @@ export const SignupForm = () => {
 
       {isLoading && (
         <AwaitingModal
-          closeAction={() => setisLoading(false)}
-          mostraractions={!message ? false : true}
-          message={!message ? "Processando..." : message}
+          closeAction={() => setIsLoading(false)}
+          mostraractions={!!message}
+          message={message || "Processando..."}
         />
       )}
     </div>

@@ -1,19 +1,18 @@
-import { Role } from "@prisma/client";
+import { Category, Role } from "@prisma/client";
 import { compare, hash } from "bcrypt-ts";
 import type { Request, Response } from "express";
 import { SigninSchemas } from "../schemas/signinSchemas";
-import { SignupAdminSchema } from "../schemas/signupSchemas";
+import { SignupSchema } from "../schemas/signupSchemas";
 import { SignupUserAmin } from "../services/auth_admin.service";
 import { RegisterActividade } from "../services/notification.service";
 import { findUserByTelefone, FindUserEmail } from "../services/user.service";
 import { createJWT } from "../utils/jwt";
-import { getPublicFormattedUrl } from "../utils/url";
 
 export const signupUserAdmin = async (req: Request, res: Response) => {
-  const safedata = SignupAdminSchema.safeParse(req.body)
+  const safedata = SignupSchema.safeParse(req.body)
 
   if (!safedata.success) {
-    return res.status(401).json({
+    return res.status(403).json({
       error: safedata.error.flatten().fieldErrors
     })
   }
@@ -23,7 +22,7 @@ export const signupUserAdmin = async (req: Request, res: Response) => {
     return res.status(403).json({ error: 'Acesso negado' })
   }
 
-  const haspass = await hash(safedata.data.password as string, 10)
+  const haspass = await hash(safedata.data.password, 5)
 
   const newAdmin = await SignupUserAmin({
     nome: safedata.data.nome,
@@ -35,7 +34,7 @@ export const signupUserAdmin = async (req: Request, res: Response) => {
   if (!newAdmin) {
     return res.status(403).json({ error: 'Acesso negado' })
   }
-  const token = await createJWT(newAdmin.id, newAdmin.role)
+  const token = createJWT(newAdmin.id, newAdmin.role)
   return res.status(201).json({
     message: 'Usuario cadastrdo com sucesso',
     user: {
@@ -49,25 +48,29 @@ export const signupUserAdmin = async (req: Request, res: Response) => {
 }
 
 export const signupUserProfisional = async (req: Request, res: Response) => {
-  const safedata = SignupAdminSchema.safeParse(req.body)
+  const safedata = SignupSchema.safeParse(req.body)
+
   if (!safedata.success) {
-    return res.status(401).json({
+    return res.status(403).json({
       error: safedata.error.flatten().fieldErrors
     })
   }
+
   const image = req.file
+
   if (!image) {
     return res.status(400).json({ error: "Nenhum arquivo enviado" });
   }
 
-  const resumeImage = getPublicFormattedUrl(image.path as string)
+  const resumeImage = image.path
   const verifyUser = await FindUserEmail(safedata.data.email)
-  
+
   if (verifyUser) {
     return res.status(403).json({ error: 'Acesso negado' })
   }
 
-  const haspass = await hash(safedata.data.password as string, 10)
+
+  const haspass = await hash(safedata.data.password, 5)
 
   const newAdmin = await SignupUserAmin({
     nome: safedata.data.nome,
@@ -75,15 +78,17 @@ export const signupUserProfisional = async (req: Request, res: Response) => {
     password: haspass,
     telefone: safedata.data.telefone || null,
     image: resumeImage,
-    role: Role.PROFESSIONAL
+    role: Role.PROFESSIONAL,
+    categoria: safedata.data.categoria as Category || null,
   })
 
   if (!newAdmin) {
     return res.status(403).json({ error: 'Acesso negado' })
   }
-  await RegisterActividade(`Profissional ${newAdmin.nome} acbou de se registar`, newAdmin.id)
 
-  const token = await createJWT(newAdmin.id, newAdmin.role)
+  RegisterActividade(`Profissional ${newAdmin.nome} foi cadastrado`, newAdmin.id)
+
+  const token = createJWT(newAdmin.id, newAdmin.role)
 
   return res.status(201).json({
     message: 'Usuario cadastrdo com sucesso',
@@ -98,9 +103,10 @@ export const signupUserProfisional = async (req: Request, res: Response) => {
 }
 
 export const signupUserClient = async (req: Request, res: Response) => {
-  const safedata = SignupAdminSchema.safeParse(req.body)
+  const safedata = SignupSchema.safeParse(req.body)
+
   if (!safedata.success) {
-    return res.status(401).json({
+    return res.status(403).json({
       error: safedata.error.flatten().fieldErrors
     })
   }
@@ -111,7 +117,7 @@ export const signupUserClient = async (req: Request, res: Response) => {
     return res.status(403).json({ error: 'Acesso negado' })
   }
 
-  const haspass = await hash(safedata.data.password as string, 10)
+  const haspass = await hash(safedata.data.password, 5)
 
   const newClient = await SignupUserAmin({
     nome: safedata.data.nome,

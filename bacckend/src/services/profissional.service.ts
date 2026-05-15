@@ -1,7 +1,8 @@
-import { prisma } from "../utils/prisma"
-import { getPublicURL } from "../utils/url"
+import { Category } from '@prisma/client';
+import { prisma } from "../utils/prisma";
+import { getPublicURL } from "../utils/url";
 
-export const FindProfissionalById = async (id: string) => {
+export const FindProfessionalsById = async (id: string) => {
   const user = await prisma.user.findFirst({
     select: {
       id: true,
@@ -10,6 +11,7 @@ export const FindProfissionalById = async (id: string) => {
       email: true,
       role: true,
       image: true,
+      categoria: true,
       images: {
         select: {
           id: true,
@@ -24,13 +26,14 @@ export const FindProfissionalById = async (id: string) => {
   return user
 }
 
-export const FindAllProfissionais = async () => {
+export const FindAllProfessionals = async () => {
   const users = await prisma.user.findMany({
     select: {
       id: true,
       nome: true,
       telefone: true,
       email: true,
+      categoria: true,
       role: true,
       image: true,
     },
@@ -45,7 +48,30 @@ export const FindAllProfissionais = async () => {
   return aliatorio
 }
 
-export const FindAllAgendamentoByProfissional = async (professionalId: string) => {
+export const FindAllProfessionalsWareCategory = async (categoria: Category) => {
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      nome: true,
+      telefone: true,
+      email: true,
+      categoria: true,
+      role: true,
+      image: true,
+    },
+    where: { role: 'PROFESSIONAL', categoria }
+  })
+
+  const aliatorio = users.sort(() => 0.5 - Math.random())
+
+  for (const user in aliatorio) {
+    aliatorio[user].image = getPublicURL(aliatorio[user].image || undefined);
+  }
+  return aliatorio
+}
+
+
+export const FindAllAgendamentoByProfessionals = async (professionalId: string) => {
 
   const agendamentos = await prisma.agendamento.findMany({
     select: {
@@ -69,6 +95,7 @@ export const FindAllAgendamentoByProfissional = async (professionalId: string) =
           duration: true,
           price: true,
           images: true,
+          categoria: true,
         }
       },
     },
@@ -78,6 +105,7 @@ export const FindAllAgendamentoByProfissional = async (professionalId: string) =
     orderBy: { date: 'desc' }
   })
   for (const agendImdex in agendamentos) {
+
     const images = agendamentos[agendImdex].service.images;
     agendamentos[agendImdex].client.image = getPublicURL(
       agendamentos[agendImdex].client.image || undefined);

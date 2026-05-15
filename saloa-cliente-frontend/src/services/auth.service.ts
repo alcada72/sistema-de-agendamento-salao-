@@ -1,6 +1,8 @@
 import api from "@/api/api";
 import { User } from "@/types/user";
 import { saveAuth } from "@/utils/auth";
+import { saveAuthAdmin } from "@/utils/auth.admin";
+import { saveAuthProf } from "@/utils/auth.prof";
 
 interface AuthResponse {
   token: string;
@@ -17,7 +19,15 @@ export const SigninService = async (
       password
     });
 
-    saveAuth(data.token, data.user.id);
+
+
+    if (data.user.role === 'ADMIN') {
+      saveAuthAdmin(data.token, data.user.id);
+    } else if (data.user.role === 'PROFESSIONAL') {
+      saveAuthProf(data.token, data.user.id);
+    } else {
+      saveAuth(data.token, data.user.id);
+    }
 
     return data.user;
   } catch (error) {
