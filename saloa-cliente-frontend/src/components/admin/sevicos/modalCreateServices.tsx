@@ -103,15 +103,12 @@ export default function ModalCreateServices({
 
   useEffect(() => {
     get();
-    return () => {
-      get();
-    };
   }, [categoria]);
 
   return (
     <div
       className={`
-        ${!mostar ? "hidden" : "flex"}
+        ${mostar ? "flex" : "hidden"}
       fixed inset-0   bg-black/40 
           backdrop-blur-[2px] items-center justify-center z-40 size-full
       `}
@@ -149,8 +146,8 @@ export default function ModalCreateServices({
             <div className=" w-90 h-90 flex items-center justify-center rounded-2xl bg-gray-600">
               <div
                 className="size-10/12  border-dashed border-2 rounded-2xl
-           border-neutral-300/30 flex flex-col items-center justify-center
-            relative cursor-pointer overflow-hidden text-neutral-300"
+              border-neutral-300/30 flex flex-col items-center justify-center
+              relative cursor-pointer overflow-hidden text-neutral-300"
               >
                 <input
                   type="file"
@@ -284,9 +281,12 @@ export default function ModalCreateServices({
               {Proficional &&
                 Proficional.length > 0 &&
                 Proficional.map((p) => (
-                  <button
+                  <div
                     key={p.id}
-                    onClick={() => setProfessionalId(p.id)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setProfessionalId(p.id);
+                    }}
                     className={`p-1 my-1 ${
                       professionalId === p.id &&
                       "border border-blue-500 scale-100"
@@ -294,7 +294,7 @@ export default function ModalCreateServices({
                     flex-1 min-w-48.25 md:min-w-45 max-w-1/2 overflow-hidden`}
                   >
                     <CardFuncionario user={p} />
-                  </button>
+                  </div>
                 ))}
             </div>
 
