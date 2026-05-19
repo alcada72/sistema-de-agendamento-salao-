@@ -34,7 +34,7 @@ export const SignupForm = () => {
     );
 
     if (!result) {
-      setmessage("Erro ao criar usuario");
+      setmessage("Erro ao criar usuario, usuario já existente");
       setIsLoading(false);
       return;
     }

@@ -34,13 +34,6 @@ export const signupUserAdmin = async (req: Request, res: Response) => {
   if (!newAdmin) {
     return res.status(403).json({ error: 'Acesso negado' })
   }
-
-  if (newAdmin.error.code === 'P2002') {
-    return res.status(409).json({
-      error: 'Email já existe'
-    })
-  }
-
   const token = createJWT(newAdmin.id, newAdmin.role)
   return res.status(201).json({
     message: 'Usuario cadastrdo com sucesso',
@@ -76,6 +69,7 @@ export const signupUserProfisional = async (req: Request, res: Response) => {
     return res.status(403).json({ error: 'Acesso negado' })
   }
 
+
   const haspass = await hash(safedata.data.password, 5)
 
   const newAdmin = await SignupUserAmin({
@@ -87,12 +81,6 @@ export const signupUserProfisional = async (req: Request, res: Response) => {
     role: Role.PROFESSIONAL,
     categoria: safedata.data.categoria as Category || null,
   })
-
-  if (newAdmin.error.code === 'P2002') {
-    return res.status(409).json({
-      error: 'Email já existe'
-    })
-  }
 
   if (!newAdmin) {
     return res.status(403).json({ error: 'Acesso negado' })
@@ -138,13 +126,6 @@ export const signupUserClient = async (req: Request, res: Response) => {
     telefone: safedata.data.telefone || null,
     role: Role.CLIENT,
   })
-
-  if (newClient.error.code === 'P2002') {
-    return res.status(409).json({
-      error: 'Email já existe'
-    })
-  }
-
 
   if (!newClient) {
     return res.status(403).json({ error: 'Acesso' })
