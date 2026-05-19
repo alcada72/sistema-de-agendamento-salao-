@@ -59,7 +59,11 @@ export const EditIfonForm = ({ user }: Props) => {
     try {
       setIsLoandig(true);
 
-      await api.putForm("/users/me", fd);
+      const response = await api.put("/users/me", fd);
+      console.log(response);
+      if (!response) {
+        alert("Erro ao atualizar o usuário");
+      }
 
       router.refresh();
       alert("Atualizado com sucesso!");

@@ -27,4 +27,3 @@ export const perfilImg = new CloudinaryStorage({
     public_id: "JMC" + Date.now().toString() + "-" + file.originalname.split(".")[0],
   }),
 });
-

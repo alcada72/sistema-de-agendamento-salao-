@@ -55,8 +55,6 @@ export async function updateMe(req: Request, res: Response) {
     const image = reqExtended.file as Express.Multer.File;
     console.log('O file é ', image);
 
-
-    // imagem opcional
     if (image) {
 
       if (user.image) {
