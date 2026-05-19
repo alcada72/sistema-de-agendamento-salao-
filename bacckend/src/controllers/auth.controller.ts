@@ -34,6 +34,13 @@ export const signupUserAdmin = async (req: Request, res: Response) => {
   if (!newAdmin) {
     return res.status(403).json({ error: 'Acesso negado' })
   }
+
+  if (newAdmin.error.code === 'P2002') {
+    return res.status(409).json({
+      error: 'Email já existe'
+    })
+  }
+
   const token = createJWT(newAdmin.id, newAdmin.role)
   return res.status(201).json({
     message: 'Usuario cadastrdo com sucesso',
@@ -69,7 +76,6 @@ export const signupUserProfisional = async (req: Request, res: Response) => {
     return res.status(403).json({ error: 'Acesso negado' })
   }
 
-
   const haspass = await hash(safedata.data.password, 5)
 
   const newAdmin = await SignupUserAmin({
@@ -81,6 +87,12 @@ export const signupUserProfisional = async (req: Request, res: Response) => {
     role: Role.PROFESSIONAL,
     categoria: safedata.data.categoria as Category || null,
   })
+
+  if (newAdmin.error.code === 'P2002') {
+    return res.status(409).json({
+      error: 'Email já existe'
+    })
+  }
 
   if (!newAdmin) {
     return res.status(403).json({ error: 'Acesso negado' })
@@ -125,30 +137,23 @@ export const signupUserClient = async (req: Request, res: Response) => {
     password: haspass,
     telefone: safedata.data.telefone || null,
     role: Role.CLIENT,
-    emaiverificationid: '',
-    expiracaoEmail: new Date(Date.now() + 10 * 60 * 1000),
   })
+
+  if (newClient.error.code === 'P2002') {
+    return res.status(409).json({
+      error: 'Email já existe'
+    })
+  }
 
 
   if (!newClient) {
     return res.status(403).json({ error: 'Acesso' })
   }
 
-  // try {
-  //   if (newClient.email) await VerifyEmailSend(newClient.email);
-  // } catch (err) {
-  //   console.error("Erro ao enviar e-mail:", err);
 
-  //   await prisma.user.delete({ where: { id: newClient.id } });
+  const token = createJWT(newClient.id, newClient.role)
 
-  //   return res.status(403).json({
-  //     error: "Erro ao enviar e-mail de verificação. Cadastro cancelado.",
-  //   });
-  // }
-
-  const token = await createJWT(newClient.id, newClient.role)
-
-  await RegisterActividade(`Cliente ${newClient.nome} acbou de se registar`, newClient.id)
+  RegisterActividade(`Cliente ${newClient.nome} acbou de se registar`, newClient.id)
 
   return res.status(201).json({
     message: 'Usuario cadastrdo com sucesso',

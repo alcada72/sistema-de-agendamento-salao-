@@ -159,11 +159,11 @@ export async function deleteServiceById(req: Request, res: Response) {
   if (!reqExtended.userId || (reqExtended.role !== 'ADMIN' && reqExtended.role !== 'PROFESSIONAL')) {
     return res.status(403).json({ error: "Acesso negado" });
   }
-  const service = await findServiceById(id as string)
+  const service = await findServiceById(id)
   if (!service) {
     return res.status(403).json({ error: "serviço não encontrado" });
   }
-  const deletedService = await deleteServiceByIdservice(id as string);
+  const deletedService = await deleteServiceByIdservice(id);
   if (!deletedService) {
     return res.status(403).json({ error: "Erro ao deletar serviço" });
   }

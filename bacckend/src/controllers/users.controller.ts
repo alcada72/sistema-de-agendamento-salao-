@@ -129,11 +129,11 @@ export async function deleteUserById(req: Request, res: Response) {
   if (!user) {
     return res.status(404).json({ error: "Usuário não encontrado" });
   }
-  const deletedUser = await DeleteUserById(id as string);
+  const deletedUser = await DeleteUserById(id);
   if (!deletedUser) {
     return res.status(403).json({ error: "Erro ao deletar usuário" });
   }
-  RegisterActividade(`o usuario ${user.nome} teve sua conta deletada`, user.id)
+
   return res.status(200).json({ message: 'Usuário deletado com sucesso', user: deletedUser });
 }
 
@@ -169,7 +169,7 @@ export async function postImagem(req: Request, res: Response) {
   }
 
   const user = await FindUserById(id);
-  
+
   if (!user) {
     return res.status(404).json({ error: "Usuário inexistente" });
   }
