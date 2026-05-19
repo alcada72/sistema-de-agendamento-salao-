@@ -52,11 +52,12 @@ export async function updateMe(req: Request, res: Response) {
 
     let publicUrl = user.image;
 
-    console.log(req.file);
-    
+    const image = reqExtended.file as Express.Multer.File;
+    console.log('O file é ', image);
+
 
     // imagem opcional
-    if (req.file) {
+    if (image) {
 
       if (user.image) {
         deleteImageFromCloudinary(user.image)
@@ -65,8 +66,9 @@ export async function updateMe(req: Request, res: Response) {
           );
       }
 
-      publicUrl = req.file.path;
+      publicUrl = image.path;
     }
+    console.log('Public url ', publicUrl);
 
     const updatedUser = await UpdateUserById(id, {
       ...safedata.data,
