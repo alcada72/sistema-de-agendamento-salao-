@@ -9,7 +9,7 @@ export default function ModalScreens({ children, onClose }: Readonly<Props>) {
       className={`
       fixed inset-0   bg-black/40 
       backdrop-blur-[2px] flex flex-col
-      items-center justify-center z-40 
+      items-center justify-center z-50 
       size-full overflow-x-auto
       `}
     >
