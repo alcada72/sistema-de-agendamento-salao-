@@ -38,7 +38,7 @@ export const HardFuncionarioCard = ({ user }: Props) => {
       flex-1 min-w-48.25 md:min-w-45 max-w-1/3 md:max-w-1/4 overflow-hidden relative"
     >
       {isAdmin && (
-        <div className="absolute top-2 right-2 z-50 flex gap-2">
+        <div className="absolute top-2 right-2 z-30 flex gap-2">
           {/* <button
             className="bg-blue-600/90 hover:bg-blue-700
       text-white text-xs px-2 py-1 rounded-md

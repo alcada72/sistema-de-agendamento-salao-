@@ -45,7 +45,7 @@ export const CardService = ({ service }: Props) => {
       relative shadow shadow-black/30"
     >
       {isAdmin && (
-        <div className="absolute top-2 right-2 z-50 flex gap-2">
+        <div className="absolute top-2 right-2 z-30 flex gap-2">
           {/* <button
             className="bg-blue-600/90 hover:bg-blue-700
             text-white text-xs px-2 py-1 rounded-md

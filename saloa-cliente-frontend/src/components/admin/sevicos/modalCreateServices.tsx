@@ -31,6 +31,7 @@ export default function ModalCreateServices({
   const [duration, setDuration] = useState<string>("");
   const [price, setPrice] = useState<string>("");
   const [categoria, setCategoria] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files;
@@ -50,6 +51,8 @@ export default function ModalCreateServices({
   };
 
   const handleCreateService = async () => {
+    setIsLoading(true);
+
     if (
       !nome.trim() ||
       !description.trim() ||
@@ -72,11 +75,19 @@ export default function ModalCreateServices({
     for (const element of image) {
       formData.append("image", element);
     }
-
-    const result = await apiAdmin.postForm("/services", formData, {});
-    if (result) {
+    try {
+      const result = await apiAdmin.postForm("/services", formData, {});
+      if (!result) {
+        alert("Erro ao criar serviço");
+        setIsLoading(false);
+        return;
+      }
       HandleCancel();
       roalond();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -303,6 +314,7 @@ export default function ModalCreateServices({
                 vbg
                 label={"criar serviço"}
                 size={1}
+                disabled={isLoading}
                 onClick={handleCreateService}
                 uppercase
               />
