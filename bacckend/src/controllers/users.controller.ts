@@ -23,33 +23,71 @@ export async function getMe(req: Request, res: Response) {
 }
 
 export async function updateMe(req: Request, res: Response) {
-  const reqExtended = req as extendedRequest
-  const id = reqExtended.userId;
-  const safedata = upDateUserSchema.safeParse(req.body)
+  try {
 
-  if (!safedata.success) {
-    return res.status(401).json({
-      error: safedata.error.flatten().fieldErrors
-    })
-  }
+    const reqExtended = req as extendedRequest;
+    const id = reqExtended.userId;
 
-  if (!id) {
-    return res.status(401).json({ error: "Não autenticado" });
-  }
+    if (!id) {
+      return res.status(401).json({
+        error: "Não autenticado"
+      });
+    }
 
-  const user = await FindUserById(id);
-  if (!user) {
-    return res.status(404).json({ error: "Usuário não encontrado" });
-  }
+    const safedata = upDateUserSchema.safeParse(req.body);
 
-  const updatedUser = await UpdateUserById(id as string, safedata.data);
-  if (!updatedUser) {
-    return res.status(403).json({ error: "Erro ao atualizar usuário" });
+    if (!safedata.success) {
+      return res.status(400).json({
+        error: safedata.error.flatten().fieldErrors
+      });
+    }
+
+    const user = await FindUserById(id);
+
+    if (!user) {
+      return res.status(404).json({
+        error: "Usuário não encontrado"
+      });
+    }
+
+    let publicUrl = user.image;
+
+    // imagem opcional
+    if (req.file) {
+
+      if (user.image) {
+        deleteImageFromCloudinary(user.image)
+          .catch(err =>
+            console.error("Erro ao deletar imagem:", err)
+          );
+      }
+
+      publicUrl = req.file.path;
+    }
+
+    const updatedUser = await UpdateUserById(id, {
+      ...safedata.data,
+      image: publicUrl
+    });
+
+    RegisterActividade(
+      `O usuário ${user.nome} atualizou seu perfil`,
+      user.id
+    ).catch(console.error);
+
+    return res.status(200).json({
+      user: updatedUser
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    return res.status(500).json({
+      error: "Erro interno do servidor"
+    });
   }
-  await RegisterActividade(`o usuario ${user.nome} atualizou seu perfil`, user.id)
-  return res.status(200).json({ user: updatedUser });
 }
-
 export async function updateMyPassword(req: Request, res: Response) {
   const reqExtended = req as extendedRequest
   const id = reqExtended.userId;
@@ -145,6 +183,9 @@ export async function updateUserById(req: Request, res: Response) {
       error: safedata.error.flatten().fieldErrors
     })
   }
+
+
+
   const user = await FindUserById(id);
   if (!user) {
     return res.status(404).json({ error: "Usuário não encontrado" });
@@ -189,40 +230,58 @@ export async function postImagem(req: Request, res: Response) {
 }
 
 export async function upDateAvater(req: Request, res: Response) {
-  const reqExtended = req as extendedRequest
+  const reqExtended = req as extendedRequest;
+  const id = reqExtended.userId;
 
-  const id = reqExtended.userId as string;
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        error: "Nenhum arquivo enviado"
+      });
+    }
 
-  if (!req.file) {
-    return res.status(403).json({ error: "Nenhum arquivo enviado" });
+    const user = await FindUserById(id as string);
+
+    if (!user) {
+      return res.status(404).json({
+        error: "Usuário não encontrado"
+      });
+    }
+
+    if (user.image) {
+      deleteImageFromCloudinary(user.image)
+        .catch(err => console.error("Erro ao deletar imagem:", err));
+    }
+
+    const publicUrl = req.file.path;
+
+    const avatar = await updateAvatarUser(id as string, {
+      image: publicUrl
+    });
+
+    if (!avatar) {
+      return res.status(500).json({
+        error: "Erro ao atualizar avatar"
+      });
+    }
+
+    RegisterActividade(
+      `O usuário ${user.nome} atualizou seu avatar`,
+      user.id
+    ).catch(console.error);
+
+    return res.status(200).json({
+      message: "Imagem de perfil atualizada com sucesso",
+      avatar
+    });
+
+  } catch (error) {
+    console.error("upDateAvater error:", error);
+
+    return res.status(500).json({
+      error: "Erro interno do servidor"
+    });
   }
-
-  const user = await FindUserById(id);
-
-  if (!user) {
-    return res.status(403).json({ error: "Usuário inexistente" });
-  }
-
-  if (user.image) {
-    await deleteImageFromCloudinary(user.image)
-  }
-
-
-
-  const publicUrl = req.file.path;
-
-  const avatar = await updateAvatarUser(id, { image: publicUrl })
-
-  if (!avatar) {
-    return res.status(403).json({ error: "Erro ao atualizar avatar" });
-  }
-
-
-
-
-
-  await RegisterActividade(`o usuario ${user.nome} atualizou seu avatar`, user.id)
-  res.status(201).json({ message: "Imagem de perfil atualizada com sucesso com sucesso", avatar })
 }
 
 export async function getNotifcationsByUser(req: Request, res: Response) {

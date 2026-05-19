@@ -1,7 +1,6 @@
 "use client";
 
-import { UpdateImage } from "@/services/auth.service";
-import { UpdateUserByIdService } from "@/services/user.service";
+import api from "@/api/api";
 import { User } from "@/types/user";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
@@ -9,14 +8,13 @@ import { Avatar } from "../comments/avatar";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 
-
 type Props = {
   user: User;
 };
 
 export const EditIfonForm = ({ user }: Props) => {
   const fileInputAvatarRef = useRef<HTMLInputElement>(null);
-  const [isLoandig, setisLoading] = useState(false);
+  const [isLoandig, setIsLoandig] = useState(false);
 
   const [nomeField, setNomeField] = useState(user.nome);
   const [telefoneField, setTelefoneField] = useState(user.telefone);
@@ -37,30 +35,35 @@ export const EditIfonForm = ({ user }: Props) => {
 
     const views = URL.createObjectURL(file);
     setPreview(views);
+
+    return () => URL.revokeObjectURL(views);
   };
 
   const handleSubmit = async () => {
     const fd = new FormData();
+
+    fd.append("nome", nomeField);
+    fd.append("email", emailField);
+    fd.append("telefone", telefoneField);
+
     if (avatar) {
-      fd.append("image", avatar);
+      fd.append("avatar", avatar);
     }
 
     try {
-      setisLoading(true);
-      await UpdateUserByIdService({
-        nome: nomeField,
-        email: emailField,
-        telefone: telefoneField,
-      });
-      
-      if (avatar) await UpdateImage(fd);
+      setIsLoandig(true);
 
+      await api.put("/users/me", fd, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      router.refresh();
       alert("Atualizado com sucesso!");
-      return router.replace("/profile");
+      router.push("/profile");
     } catch (error) {
       console.log(error);
     } finally {
-      setisLoading(false);
+      setIsLoandig(false);
     }
   };
 
