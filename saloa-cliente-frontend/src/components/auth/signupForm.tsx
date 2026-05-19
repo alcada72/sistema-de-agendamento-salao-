@@ -57,6 +57,7 @@ export const SignupForm = () => {
       />
       <Input
         value={telefoneField}
+        type="number"
         onChangeText={(texto) => setTelefoneField(texto)}
         placeholder={"Digite seu nº Telefone"}
       />

@@ -44,16 +44,17 @@ export const SignUpService = async (
 ): Promise<User | false> => {
 
   try {
-    const { data } = await api.post<AuthResponse>("/auth/signup/client", {
+    const res = await api.post("/auth/signup/client", {
       nome,
       email,
       telefone,
       password
     });
 
-    saveAuth(data.token, data.user.id);
+    saveAuth(res.data.token, res.data.user.id);
+    console.log(res);
 
-    return data.user;
+    return res.data.user;
   } catch (error) {
     console.log(error);
 
