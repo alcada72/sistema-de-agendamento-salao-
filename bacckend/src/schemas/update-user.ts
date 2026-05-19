@@ -3,7 +3,6 @@ import { z } from "zod";
 export const upDateUserSchema = z.object({
   nome: z.string({ error: "nome Obrigatório" }).min(10, "Minimo 6 caractres"),
   email: z.email({ error: "E-mail Obrigatório" }),
-  image: z.string().optional(),
   telefone: z.string().min(9, "pelo menos 9 numeros").optional()
 });
 
