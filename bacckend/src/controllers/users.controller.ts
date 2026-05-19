@@ -170,6 +170,15 @@ export async function deleteUserById(req: Request, res: Response) {
   if (!user) {
     return res.status(404).json({ error: "Usuário não encontrado" });
   }
+
+  if (user.image) {
+    deleteImageFromCloudinary(user.image)
+      .catch(err =>
+        console.error("Erro ao deletar imagem:", err)
+      );
+  }
+
+
   const deletedUser = await DeleteUserById(id);
   if (!deletedUser) {
     return res.status(403).json({ error: "Erro ao deletar usuário" });

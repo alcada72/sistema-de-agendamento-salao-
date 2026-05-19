@@ -10,6 +10,7 @@ import { FindProfessionalsById } from "../services/profissional.service";
 import { creatServicesService, deleteServiceByIdservice, findAllServices, findServiceById, getOtherServiceNotId, getServicesWithPagination, updateServiceByIdservice } from "../services/servicos.service";
 import { FindUserById } from "../services/user.service";
 import { extendedRequest } from "../types/extended-types";
+import { deleteImageFromCloudinary } from "../utils/cloudinary";
 
 export async function creatServicos(req: Request, res: Response) {
   const reqExtended = req as extendedRequest
@@ -163,6 +164,14 @@ export async function deleteServiceById(req: Request, res: Response) {
   if (!service) {
     return res.status(403).json({ error: "serviço não encontrado" });
   }
+
+  if (service.images) {
+    service.images.forEach(img => deleteImageFromCloudinary(img.url)
+      .catch(err =>
+        console.error("Erro ao deletar imagem:", err)
+      ))
+  }
+
   const deletedService = await deleteServiceByIdservice(id);
   if (!deletedService) {
     return res.status(403).json({ error: "Erro ao deletar serviço" });
