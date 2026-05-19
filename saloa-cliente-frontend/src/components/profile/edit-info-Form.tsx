@@ -59,9 +59,7 @@ export const EditIfonForm = ({ user }: Props) => {
     try {
       setIsLoandig(true);
 
-      await api.put("/users/me", fd, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      await api.putForm("/users/me", fd);
 
       router.refresh();
       alert("Atualizado com sucesso!");
