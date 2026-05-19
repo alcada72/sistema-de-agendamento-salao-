@@ -34,7 +34,7 @@ mainRouter.post('/auth/signin', authController.SigninUser)
 
 //rotas de usuário
 mainRouter.get('/users/me', verifyJWT, usersController.getMe)
-mainRouter.put('/users/me', verifyJWT, perfil.single('avatar'), usersController.updateMe)
+mainRouter.put('/users/me', verifyJWT, perfil.single('image'), usersController.updateMe)
 mainRouter.delete('/users/me', verifyJWT, usersController.deleteMe)
 mainRouter.post('/users/image', verifyJWT, tweets.single("image"), usersController.postImagem)
 mainRouter.put('/users/avatar', verifyJWT, perfil.single("image"), usersController.upDateAvater)

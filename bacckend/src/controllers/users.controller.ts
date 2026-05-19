@@ -52,6 +52,9 @@ export async function updateMe(req: Request, res: Response) {
 
     let publicUrl = user.image;
 
+    console.log(req.file);
+    
+
     // imagem opcional
     if (req.file) {
 

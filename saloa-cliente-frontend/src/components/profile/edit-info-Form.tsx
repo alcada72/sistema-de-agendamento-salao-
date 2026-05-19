@@ -2,6 +2,7 @@
 
 import api from "@/api/api";
 import { User } from "@/types/user";
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { Avatar } from "../comments/avatar";
@@ -40,6 +41,7 @@ export const EditIfonForm = ({ user }: Props) => {
   };
 
   const handleSubmit = async () => {
+    if (isLoandig) return;
     const fd = new FormData();
 
     fd.append("nome", nomeField);
@@ -47,7 +49,11 @@ export const EditIfonForm = ({ user }: Props) => {
     fd.append("telefone", telefoneField);
 
     if (avatar) {
-      fd.append("avatar", avatar);
+      fd.append("image", avatar);
+    }
+
+    for (const pair of fd.entries()) {
+      console.log(pair);
     }
 
     try {
@@ -62,6 +68,10 @@ export const EditIfonForm = ({ user }: Props) => {
       router.push("/profile");
     } catch (error) {
       console.log(error);
+      if (axios.isAxiosError(error)) {
+        console.log(error.response?.data?.error);
+        alert(error.response?.data?.error);
+      }
     } finally {
       setIsLoandig(false);
     }
