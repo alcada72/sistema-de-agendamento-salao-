@@ -41,18 +41,26 @@ export const SignUpService = async (
   email: string,
   telefone: string,
   password: string
-): Promise<User> => {
+): Promise<User | false> => {
 
-  const { data } = await api.post<AuthResponse>("/auth/signup/client", {
-    nome,
-    email,
-    telefone,
-    password
-  });
+  try {
+    const { data } = await api.post<AuthResponse>("/auth/signup/client", {
+      nome,
+      email,
+      telefone,
+      password
+    });
 
-  saveAuth(data.token, data.user.id);
+    saveAuth(data.token, data.user.id);
 
-  return data.user;
+    return data.user;
+  } catch (error) {
+    console.log(error);
+
+    return false
+  }
+
+
 };
 
 export const UpdateImage = async (

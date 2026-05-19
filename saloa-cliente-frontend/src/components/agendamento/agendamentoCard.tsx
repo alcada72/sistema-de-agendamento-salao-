@@ -29,7 +29,7 @@ export function AgendamentoCard({
   showOptios,
   onCancel,
   onDelete,
-}: Props) {
+}: Readonly<Props>) {
   const [more, setmore] = useState(false);
 
   const statusMap = {
@@ -93,9 +93,9 @@ export function AgendamentoCard({
           <div className="shadow-2xl shadow-black bg-gray-600 p-1 rounded-md ">
             {status !== "CANCELLED" && (
               <button
-                className="flex items-center gap-0.5 bg-amber-800 p-0.5 rounded-sm w-full"
+                className="flex items-center cursor-pointer gap-0.5 bg-amber-800 p-0.5 rounded-sm w-full"
                 onClick={() => {
-                  onCancel;
+                  onCancel?.();
                   setmore(false);
                 }}
               >
@@ -108,9 +108,10 @@ export function AgendamentoCard({
             <div className="w-full bg-gray-300 h-[1px] my-1"></div>
 
             <button
-              className="flex items-center gap-0.5 bg-red-800 p-0.5 rounded-sm w-full"
+              className="flex items-center cursor-pointer
+               gap-0.5 bg-red-800 p-0.5 rounded-sm w-full"
               onClick={() => {
-                onDelete;
+                onDelete?.();
                 setmore(false);
               }}
             >

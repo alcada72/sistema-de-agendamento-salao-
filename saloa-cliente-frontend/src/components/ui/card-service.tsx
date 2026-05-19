@@ -1,4 +1,5 @@
 "use client";
+import { DeleteServiceAdmin } from "@/services/admin/servico.service";
 import { service } from "@/types/servicos";
 import { formatCountMax } from "@/utils/format-Count";
 import { formatDuration } from "@/utils/formateDuration";
@@ -19,17 +20,58 @@ export const CardService = ({ service }: Props) => {
 
   const cover = service.images?.[0]?.url ?? null;
 
+  const HandleDeleteService = async () => {
+    if (!isAdmin) return;
+    const confirmar = confirm("Deseja mesmo eliminar este serviço?");
+
+    if (!confirmar) return;
+
+    const res = await DeleteServiceAdmin(service.id);
+
+    if (res) {
+      alert("Serviço eliminado com sucesso");
+      globalThis.location.reload();
+    } else {
+      alert("Erro ao eliminar serviço, O serviço tem agendamentos");
+    }
+  };
+
   return (
     <Link
       title={service.nome}
-      href={
-        !isAdmin
-          ? "/home/services/" + service.id
-          : "#" 
-      }
+      href={isAdmin ? "#" : "/home/services/" + service.id}
       className="border-1 size-full border-gray-900/70 rounded-lg w-full
-      flex-1 min-w-[193px] md:min-w-[180px]  max-w-1/3 md:max-w-1/4 overflow-hidden shadow shadow-black/30"
+      flex-1 min-w-[193px] md:min-w-[180px]  max-w-1/3 md:max-w-1/4 overflow-hidden 
+      relative shadow shadow-black/30"
     >
+      {isAdmin && (
+        <div className="absolute top-2 right-2 z-50 flex gap-2">
+          {/* <button
+            className="bg-blue-600/90 hover:bg-blue-700
+            text-white text-xs px-2 py-1 rounded-md
+            backdrop-blur-md transition cursor-pointer"
+            onClick={(e) => {
+              e.preventDefault();
+              HandleDeleteService();
+            }}
+          >
+            Editar
+          </button> */}
+
+          <button
+            className="bg-red-600/90 hover:bg-red-700
+      text-white text-xs px-2 py-1 rounded-md
+      backdrop-blur-md transition cursor-pointer"
+            onClick={(e) => {
+              e.preventDefault();
+              HandleDeleteService();
+            }}
+          >
+            Apagar
+          </button>
+        </div>
+      )}
+
       <div
         className="flex-1 overflow-hidden rounded-lg
         min-h-[180px] max-h-[180px] size-full aspect-video p-1 relative"
@@ -50,10 +92,11 @@ export const CardService = ({ service }: Props) => {
         bg-gradient-to-b
          from-black/50 via-transparent to-transparent"
         >
-          {!isAdmin &&
-          <div className="absolute top-2 right-2">
-            <ButtonMark id={service.id} />
-          </div>}
+          {!isAdmin && (
+            <div className="absolute top-2 right-2">
+              <ButtonMark id={service.id} />
+            </div>
+          )}
         </div>
       </div>
       <div className="p-1">
@@ -65,9 +108,8 @@ export const CardService = ({ service }: Props) => {
             <FontAwesomeIcon
               icon={faComment}
               className="text-blue-300 ml-0.5 text-sm"
-            />
-            {' '}
-          {formatCountMax(service.comments.length, 99)}
+            />{" "}
+            {formatCountMax(service.comments.length, 99)}
           </span>
         </div>
         <div className="flex justify-between items-center">

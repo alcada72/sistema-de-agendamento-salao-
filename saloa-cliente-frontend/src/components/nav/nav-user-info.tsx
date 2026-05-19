@@ -11,7 +11,7 @@ export const NavUserInfo = async () => {
 
   return (
     <div className="flex items-center">
-      <div className="size-10 mr-2 rounded-full overflow-hidden bg-gray-400">
+      <div className="size-10 mr-2 rounded-full overflow-hidden bg-gray-500">
         <Link href="/profile">
           <img
             src={user.image}

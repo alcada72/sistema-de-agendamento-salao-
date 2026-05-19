@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { CreateFuncionario } from "@/services/admin/auth.service";
 import { GetProfissionaisLimited } from "@/services/admin/servico.service";
 import { User } from "@/types/user";
+import contemNumeros from "@/utils/contemNumeros";
 import { useEffect, useRef, useState } from "react";
 
 export default function page() {
@@ -59,14 +60,14 @@ export default function page() {
   }
 
   async function CreatProfissional() {
-    if (
-      !nome.trim() ||
-      !telefone.trim() ||
-      !email.trim() ||
-      !image ||
-      !categoria
-    )
+    if (!nome.trim() || !telefone.trim() || !email.trim() || !categoria)
       return alert("Prencha todos os campos");
+
+    const haveNumber = contemNumeros(nome);
+
+    if (haveNumber) return alert("O campo nome não pode conter numero");
+
+    if (!image) return alert("Seleciona a imagem do funcionario");
 
     if (telefone.length < 9) {
       return alert("O telefone tem que ter 9 caracteres minimos");
@@ -177,7 +178,7 @@ export default function page() {
                       placeholder="Ex.: Aspirante Adelino"
                       filled
                       value={nome}
-                      onChange={(texto) => setNome(texto)}
+                      onChangeText={(texto) => setNome(texto)}
                     />
                   </div>
                 </span>
@@ -190,8 +191,9 @@ export default function page() {
                     <Input
                       placeholder="Ex.: 945724107"
                       filled
+                      type="number"
                       value={telefone}
-                      onChange={(texto) => setTelefone(texto)}
+                      onChangeText={(texto) => setTelefone(texto)}
                     />
                   </div>
                 </span>
@@ -204,8 +206,9 @@ export default function page() {
                     <Input
                       placeholder="Ex.: exemplo@gmail.com"
                       filled
+                      type="email"
                       value={email}
-                      onChange={(texto) => setEmail(texto)}
+                      onChangeText={(texto) => setEmail(texto)}
                     />
                   </div>
                 </span>

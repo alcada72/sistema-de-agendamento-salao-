@@ -10,9 +10,9 @@ export const postComment = async (id: string, commentText: string): Promise<Comm
 
   try {
     const response = await api.post(`/services/${id}/comment`, {
-      
       commentText: commentText,
     });
+
     return response.data.comment;
   } catch (error) {
     console.log(error);

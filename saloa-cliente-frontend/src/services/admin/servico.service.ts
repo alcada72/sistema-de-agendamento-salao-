@@ -1,6 +1,6 @@
 import apiAdmin from "@/api/api-admin";
 import { agendado } from "@/types/agendamento";
-import { agenda, Category, service } from "@/types/servicos";
+import { Agenda, Category, service } from "@/types/servicos";
 import { User } from "@/types/user";
 import { getID } from "@/utils/auth";
 import { redirect } from "next/navigation";
@@ -41,6 +41,21 @@ export const PostAgendamento = async (data: { serviceId: string, professionalId:
   }
 }
 
+export const DeleteServiceAdmin = async (id: string): Promise<boolean | undefined> => {
+  try {
+    const res = await apiAdmin.delete(`/services/${id}`)
+    if (res.status === 200) {
+      return true
+
+    } else {
+      return false
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+
 export const GetProfissionaisLimited = async (): Promise<User[] | undefined> => {
 
   try {
@@ -73,7 +88,7 @@ export const GetProfessionalsCategoria = async (category: Category): Promise<Use
 };
 
 
-export const GetAllAgendaentosByUser = async (): Promise<agenda[] | undefined> => {
+export const GetAllAgendaentosByUser = async (): Promise<Agenda[] | undefined> => {
   try {
     const id = getID()
     const response = await apiAdmin.get(`/clients/appointments/${id}`, {})

@@ -22,3 +22,16 @@ export const getUserByIdServiceAdmin = async (id: string): Promise<User> => {
 
   return response.data.user
 }
+export const DeleteUserByIdServiceAdmin = async (id: string): Promise<boolean | undefined> => {
+  try {
+    const res = await apiAdmin.delete(`/users/${id}`)
+    if (res.status === 200) {
+      return true
+    } else {
+      return false
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+

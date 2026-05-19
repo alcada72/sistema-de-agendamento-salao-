@@ -1,5 +1,5 @@
 import apiProf from "@/api/api-prof";
-import { agenda, service } from "@/types/servicos";
+import { Agenda, service } from "@/types/servicos";
 import { User } from "@/types/user";
 import { getID } from "@/utils/auth";
 import { redirect } from "next/navigation";
@@ -49,7 +49,7 @@ export const GetProfissionaisLimited = async (): Promise<User[] | undefined> => 
 
 };
 
-export const GetAllAgendaentosByProf = async (): Promise<agenda[] | undefined> => {
+export const GetAllAgendaentosByProf = async (): Promise<Agenda[] | undefined> => {
   try {
     const id = await getID()
     const response = await apiProf.get(`/professionals/appointments/${id}`, {})

@@ -1,13 +1,13 @@
 
 import apiProf from "@/api/api-prof"
-import { agenda, service } from "@/types/servicos"
+import { Agenda, service } from "@/types/servicos"
 import { User } from "@/types/user"
 import { ID_KEY_PROF, TOKEN_KEY_PROF } from "@/utils/auth.prof"
 import { getCookie } from "cookies-next"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 
-export const GetAllAgendaentosByProfServer = async (): Promise<agenda[] | undefined> => {
+export const GetAllAgendaentosByProfServer = async (): Promise<Agenda[] | undefined> => {
   try {
     const token = await getCookie(TOKEN_KEY_PROF, { cookies })
     const id = await getCookie(ID_KEY_PROF, { cookies })
@@ -23,7 +23,7 @@ export const GetAllAgendaentosByProfServer = async (): Promise<agenda[] | undefi
 
 }
 
-export const GetAllAgendaentosServer = async (): Promise<agenda[] | undefined> => {
+export const GetAllAgendaentosServer = async (): Promise<Agenda[] | undefined> => {
   try {
     const response = await apiProf.get(`/appointments`, {})
     return response.data.agenda

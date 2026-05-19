@@ -48,12 +48,12 @@ export const SigninForm = () => {
     <div className="flex flex-col gap-4">
       <Input
         value={emailField}
-        onChange={(texto) => setEmailField(texto)}
+        onChangeText={(texto) => setEmailField(texto)}
         placeholder={"Digite seu E-mail ou nº Telefone"}
       />
       <Input
         value={passwordField}
-        onChange={(texto) => setPasswordField(texto)}
+        onChangeText={(texto) => setPasswordField(texto)}
         placeholder={"Digite sua Senha"}
         password
       />

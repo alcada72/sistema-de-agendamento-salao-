@@ -55,10 +55,11 @@ export default function ModalCreateServices({
       !description.trim() ||
       !price.trim() ||
       !professionalId.trim() ||
-      !image ||
       !categoria
     )
       return alert("Prencha todos os campos");
+
+    if (!image) return alert("Selecione as imagens do serviço");
 
     const formData = new FormData();
     formData.append("nome", nome);
@@ -91,7 +92,9 @@ export default function ModalCreateServices({
 
   const get = async () => {
     try {
-      const profisionais = await GetProfessionalsCategoria(categoria as Category);
+      const profisionais = await GetProfessionalsCategoria(
+        categoria as Category,
+      );
       setProficional(profisionais);
     } catch (error) {
       console.log(error);
@@ -188,7 +191,7 @@ export default function ModalCreateServices({
                   placeholder="nome do serviço"
                   filled
                   value={nome}
-                  onChange={(texto) => setNome(texto)}
+                  onChangeText={(texto) => setNome(texto)}
                 />
               </div>
             </span>
@@ -222,7 +225,8 @@ export default function ModalCreateServices({
                     placeholder="Preço ex.: 1500"
                     filled
                     value={price}
-                    onChange={(texto) => setPrice(texto)}
+                    type="number"
+                    onChangeText={(texto) => setPrice(texto)}
                   />
                 </div>
               </span>

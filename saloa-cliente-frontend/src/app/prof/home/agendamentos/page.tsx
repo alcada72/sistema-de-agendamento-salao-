@@ -4,15 +4,15 @@ import { GeneralHeader } from "@/components/ui/general-header";
 import SwitchTheme from "@/components/ui/SwitchTheme";
 import { GetAllAgendaentosByProf } from "@/services/prof/servico.service";
 import {
-  CancelAgendamentoById,
-  DeleteAgendamentoById
+    CancelAgendamentoById,
+    DeleteAgendamentoById
 } from "@/services/servico.service";
-import { agenda } from "@/types/servicos";
+import { Agenda } from "@/types/servicos";
 import { formatRelativeTime } from "@/utils/format-ralative";
 import { useEffect, useState } from "react";
 
 export default function Page() {
-  const [agenda, setAgenda] = useState<agenda[]>([]);
+  const [agenda, setAgenda] = useState<Agenda[]>([]);
 
   const handleGetallAgendas = async () => {
     try {

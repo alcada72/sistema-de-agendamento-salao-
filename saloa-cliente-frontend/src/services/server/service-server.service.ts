@@ -1,12 +1,12 @@
 import api from "@/api/api"
-import { agenda, service } from "@/types/servicos"
+import { Agenda, service } from "@/types/servicos"
 import { User } from "@/types/user"
 import { ID_KEY_USER, TOKEN_KEY_USER } from "@/utils/auth"
 import { getCookie } from "cookies-next"
 import { cookies } from "next/headers"
 import { redirect } from "next/navigation"
 
-export const GetAllAgendaentosByUserServer = async (): Promise<agenda[] | undefined> => {
+export const GetAllAgendaentosByUserServer = async (): Promise<Agenda[] | undefined> => {
   try {
     const token = await getCookie(TOKEN_KEY_USER, { cookies })
     const id = await getCookie(ID_KEY_USER, { cookies })
@@ -22,7 +22,7 @@ export const GetAllAgendaentosByUserServer = async (): Promise<agenda[] | undefi
 
 }
 
-export const GetAllAgendaentosServer = async (): Promise<agenda[] | undefined> => {
+export const GetAllAgendaentosServer = async (): Promise<Agenda[] | undefined> => {
   try {
     const response = await api.get(`/appointments`, {})
     return response.data.agenda

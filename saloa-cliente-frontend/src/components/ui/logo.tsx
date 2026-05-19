@@ -27,6 +27,7 @@ export const Logo = ({ size }: Props) => {
         width={size}
         height={size}
         alt="logo"
+        className="w-auto h-auto"
       />
     </Link>
   );

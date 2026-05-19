@@ -12,6 +12,8 @@ export const getUserMeService = async (): Promise<User> => {
   return response.data.user
 }
 
+
+
 export const getUserByIdService = async (id: string): Promise<User> => {
   const response = await api.get(`/users/${id}`, {})
 

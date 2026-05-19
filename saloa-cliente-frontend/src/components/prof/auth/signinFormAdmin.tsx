@@ -2,7 +2,6 @@
 import { AwaitingModal } from "@/components/ui/awaitingModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { SigninAdmin } from "@/services/admin/auth.service";
 import { SigninProf } from "@/services/prof/auth.service";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -33,12 +32,12 @@ export const SigninFormProf = () => {
     <div className="flex flex-col gap-4">
       <Input
         value={emailField}
-        onChange={(texto) => setEmailField(texto)}
+        onChangeText={(texto) => setEmailField(texto)}
         placeholder={"Digite seu E-mail ou nº Telefone"}
       />
       <Input
         value={passwordField}
-        onChange={(texto) => setPasswordField(texto)}
+        onChangeText={(texto) => setPasswordField(texto)}
         placeholder={"Digite sua Senha"}
         password
       />

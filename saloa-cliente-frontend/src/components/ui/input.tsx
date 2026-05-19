@@ -5,15 +5,18 @@ import {
   IconDefinition,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { KeyboardEvent, useState } from "react";
+import { InputHTMLAttributes, KeyboardEvent, useState } from "react";
 
-type Props = {
+
+
+type Props = InputHTMLAttributes<HTMLInputElement> & {
   placeholder: string;
   value?: string;
   filled?: boolean;
   icon?: IconDefinition;
   password?: boolean;
-  onChange?: (newValue: string) => void;
+
+  onChangeText?: (newValue: string) => void;
 
   onEnter?: () => void;
 };
@@ -24,8 +27,9 @@ export const Input = ({
   value = "",
   filled = false,
   icon,
-  onChange,
+  onChangeText: onChange,
   onEnter,
+  ...props
 }: Props) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -54,6 +58,7 @@ export const Input = ({
         autoCorrect="off"
         onChange={(e) => onChange?.(e.target.value)}
         onKeyUp={handleKeyUp}
+        {...props}
       />
       {password && (
         <FontAwesomeIcon

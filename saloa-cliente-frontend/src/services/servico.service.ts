@@ -1,6 +1,6 @@
 import api from "@/api/api";
 import { agendado } from "@/types/agendamento";
-import { agenda, Category, service } from "@/types/servicos";
+import { Agenda, Category, service } from "@/types/servicos";
 import { User } from "@/types/user";
 import { getID } from "@/utils/auth";
 import { redirect } from "next/navigation";
@@ -41,6 +41,8 @@ export const PostAgendamento = async (data: { serviceId: string, professionalId:
   }
 }
 
+
+
 export const GetProfissionaisLimited = async (): Promise<User[] | undefined> => {
 
   try {
@@ -69,7 +71,7 @@ export const GetProfessionalsCategoria = async (category: Category): Promise<Use
 
 };
 
-export const GetAllAgendaentosByUser = async (): Promise<agenda[] | undefined> => {
+export const GetAllAgendaentosByUser = async (): Promise<Agenda[] | undefined> => {
   try {
     const id = await getID()
     const response = await api.get(`/clients/appointments/${id}`, {})

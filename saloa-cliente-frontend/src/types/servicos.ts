@@ -14,7 +14,7 @@ export type service = {
   professional: User,
   comments: Comment[]
 }
-export type agenda = {
+export type Agenda = {
   id: string,
   date: Date,
   endDate: Date,

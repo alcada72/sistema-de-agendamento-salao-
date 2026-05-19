@@ -63,14 +63,14 @@ export const EditPassForm = ({ user }: Props) => {
         {message && <div className="text-red-500 text-sm">{message}</div>}
         <Input
           value={passwordField}
-          onChange={(texto) => setPasswordField(texto)}
+          onChangeText={(texto) => setPasswordField(texto)}
           placeholder={"Digite a sua senha atual"}
           password
         />
 
         <Input
           value={confirmPassword}
-          onChange={(texto) => setConfirmPassword(texto)}
+          onChangeText={(texto) => setConfirmPassword(texto)}
           placeholder={"Confirme a nova senha"}
           password
         />
@@ -97,7 +97,7 @@ export const EditPassForm = ({ user }: Props) => {
               {message && <div className="text-red-500 text-sm">{message}</div>}
               <Input
                 value={actualPassField}
-                onChange={(texto) => setActualPassField(texto)}
+                onChangeText={(texto) => setActualPassField(texto)}
                 placeholder={"Digite a sua senha actual"}
               />
 

@@ -96,17 +96,17 @@ export const EditIfonForm = ({ user }: Props) => {
       <div className="flex flex-col gap-5 md:gap-4 w-full">
         <Input
           value={nomeField}
-          onChange={(texto) => setNomeField(texto)}
+          onChangeText={(texto) => setNomeField(texto)}
           placeholder={"Digite o seu Nome"}
         />
         <Input
           value={emailField}
-          onChange={(texto) => setEmailField(texto)}
+          onChangeText={(texto) => setEmailField(texto)}
           placeholder={"digite o seu E-mail"}
         />
         <Input
           value={telefoneField}
-          onChange={(texto) => setTelefoneField(texto)}
+          onChangeText={(texto) => setTelefoneField(texto)}
           placeholder={"Digite seu nº Telefone"}
         />
 
